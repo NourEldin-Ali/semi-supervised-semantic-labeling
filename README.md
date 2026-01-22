@@ -2,6 +2,10 @@
 
 A complete full-stack application for semi-supervised labeling, clustering, and classification using embeddings, LLMs, and KNN models.
 
+## Research Use Only
+
+**This software is intended for research purposes only.** It may not be used for commercial purposes or in any commercial business. Use is permitted only for non-commercial research, experimentation, and educational activities.
+
 ## Features
 
 - **Embedding Generation**: Generate embeddings from CSV files using various models (OpenAI, Ollama, HuggingFace)
@@ -104,4 +108,8 @@ See `frontend/README.md` for details.
 
 ## License
 
-MIT
+**Research Use Only — Non-Commercial**
+
+Copyright (c) The contributors.
+
+This software is provided for **research purposes only**. You may use, modify, and distribute it solely for non-commercial research, educational, or academic purposes. **Commercial use is prohibited.** You may not use this software in connection with any commercial business, product, or service without explicit permission from the copyright holders.
