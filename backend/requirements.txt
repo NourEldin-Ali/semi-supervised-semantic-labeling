@@ -1,0 +1,21 @@
+langchain-community
+langchain-core
+langchain-openai
+langchain-ollama
+langchain-groq
+langchain_anthropic
+langgraph
+sentence-transformers
+python-dotenv
+umap-learn
+scikit-learn
+numpy<2.0.0
+matplotlib
+scipy # for possibilistic clustering
+kneed
+fastapi
+uvicorn[standard]
+python-multipart
+pandas
+joblib
+codecarbon

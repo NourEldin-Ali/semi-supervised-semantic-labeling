@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.venv/
+.venv_*/
+.env
+
+*.ipynb_checkpoints
+
+# Generated directories from API
+backend/uploads/
+backend/embeddings/
+backend/models/
+backend/outputs/
+outputs/*

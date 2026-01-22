@@ -1,0 +1,201 @@
+id,text,title
+doc_1251,Is an inventory of hardware assets maintained and updated regularly?,NIST CSF – ID.AM Asset Management
+doc_1252,Is an inventory of software assets maintained and validated?,NIST CSF – ID.AM Asset Management
+doc_1253,Are organizational assets assigned owners responsible for their security?,NIST CSF – ID.AM Asset Management
+doc_1254,Is asset inventory integrated with automated discovery tools?,NIST CSF – ID.AM Asset Management
+doc_1255,Are unauthorized assets detected and removed promptly?,NIST CSF – ID.AM Asset Management
+doc_1256,Is the organizational mission and objectives documented?,NIST CSF – ID.BE Business Environment
+doc_1257,Are critical business functions identified and prioritized?,NIST CSF – ID.BE Business Environment
+doc_1258,Are dependencies between business processes documented?,NIST CSF – ID.BE Business Environment
+doc_1259,Are roles and responsibilities defined for cybersecurity?,NIST CSF – ID.BE Business Environment
+doc_1260,"Are external dependencies identified (vendors, partners)?",NIST CSF – ID.BE Business Environment
+doc_1261,Is a cybersecurity governance structure established?,NIST CSF – ID.GV Governance
+doc_1262,Are cybersecurity policies approved by senior management?,NIST CSF – ID.GV Governance
+doc_1263,Are policies reviewed and updated annually?,NIST CSF – ID.GV Governance
+doc_1264,Is compliance with policies monitored?,NIST CSF – ID.GV Governance
+doc_1265,Are legal and regulatory requirements documented and tracked?,NIST CSF – ID.GV Governance
+doc_1266,Is a cybersecurity risk assessment performed periodically?,NIST CSF – ID.RA Risk Assessment
+doc_1267,Are internal and external threats analyzed?,NIST CSF – ID.RA Risk Assessment
+doc_1268,Are vulnerabilities identified using automated tools?,NIST CSF – ID.RA Risk Assessment
+doc_1269,Are impacts assessed for potential cybersecurity events?,NIST CSF – ID.RA Risk Assessment
+doc_1270,Is risk prioritization performed based on business impact?,NIST CSF – ID.RA Risk Assessment
+doc_1271,Is a formal risk management strategy documented?,NIST CSF – ID.RM Risk Management Strategy
+doc_1272,Are risk tolerance levels defined by leadership?,NIST CSF – ID.RM Risk Management Strategy
+doc_1273,Are cybersecurity risks mapped to controls?,NIST CSF – ID.RM Risk Management Strategy
+doc_1274,Are risk decisions reviewed periodically?,NIST CSF – ID.RM Risk Management Strategy
+doc_1275,Are risk management results reported to executives?,NIST CSF – ID.RM Risk Management Strategy
+doc_1276,Are supply chain partners evaluated for cybersecurity posture?,NIST CSF – ID.SC Supply Chain Risk
+doc_1277,Are supply chain risks considered during procurement?,NIST CSF – ID.SC Supply Chain Risk
+doc_1278,Are service-level agreements (SLAs) defined for cybersecurity?,NIST CSF – ID.SC Supply Chain Risk
+doc_1279,Are third-party incidents monitored and assessed?,NIST CSF – ID.SC Supply Chain Risk
+doc_1280,Are subcontractor risks evaluated?,NIST CSF – ID.SC Supply Chain Risk
+doc_1281,Are access rights granted on the principle of least privilege?,NIST CSF – PR.AC Access Control
+doc_1282,Is multifactor authentication required for remote or privileged accounts?,NIST CSF – PR.AC Access Control
+doc_1283,Are user accounts disabled promptly after employee termination?,NIST CSF – PR.AC Access Control
+doc_1284,Are access reviews performed periodically?,NIST CSF – PR.AC Access Control
+doc_1285,Are access approval workflows documented and enforced?,NIST CSF – PR.AC Access Control
+doc_1286,Are network access restrictions defined and enforced?,NIST CSF – PR.AC Network Controls
+doc_1287,Are network segmentation controls implemented?,NIST CSF – PR.AC Network Controls
+doc_1288,Are firewalls configured and monitored?,NIST CSF – PR.AC Network Controls
+doc_1289,Are unauthorized network connections blocked?,NIST CSF – PR.AC Network Controls
+doc_1290,Are wireless networks secured with strong authentication and encryption?,NIST CSF – PR.AC Network Controls
+doc_1291,Are users trained on cybersecurity awareness?,NIST CSF – PR.AT Awareness & Training
+doc_1292,Is training conducted during employee onboarding?,NIST CSF – PR.AT Awareness & Training
+doc_1293,Are phishing simulations conducted periodically?,NIST CSF – PR.AT Awareness & Training
+doc_1294,Are privileged users trained on advanced security topics?,NIST CSF – PR.AT Awareness & Training
+doc_1295,Is training effectiveness measured and documented?,NIST CSF – PR.AT Awareness & Training
+doc_1296,Is data-at-rest encrypted according to policy?,NIST CSF – PR.DS Data Security
+doc_1297,Is data-in-transit encrypted using secure protocols?,NIST CSF – PR.DS Data Security
+doc_1298,Are data integrity checks implemented for sensitive systems?,NIST CSF – PR.DS Data Security
+doc_1299,Are backups performed regularly for critical data?,NIST CSF – PR.DS Data Security
+doc_1300,Are backup and recovery procedures tested?,NIST CSF – PR.DS Data Security
+doc_1301,Are data retention and disposal requirements documented?,NIST CSF – PR.DS Data Handling
+doc_1302,Are secure deletion methods used for sensitive data?,NIST CSF – PR.DS Data Handling
+doc_1303,Are removable media encrypted and controlled?,NIST CSF – PR.DS Data Handling
+doc_1304,Are data classification levels defined and applied?,NIST CSF – PR.DS Data Handling
+doc_1305,Are integrity controls applied to critical information files?,NIST CSF – PR.DS Data Handling
+doc_1306,Are endpoint devices protected with EDR or antivirus tools?,NIST CSF – PR.IP Information Protection
+doc_1307,Are device configurations hardened using baseline standards?,NIST CSF – PR.IP Information Protection
+doc_1308,Are software updates and patches applied in a timely manner?,NIST CSF – PR.IP Information Protection
+doc_1309,Are removable device ports controlled or restricted?,NIST CSF – PR.IP Information Protection
+doc_1310,Are configuration changes tracked and logged?,NIST CSF – PR.IP Information Protection
+doc_1311,"Are protective technologies (firewalls, IDS/IPS) deployed and managed?",NIST CSF – PR.PT Protective Technology
+doc_1312,Are encryption keys stored in secure key management systems?,NIST CSF – PR.PT Protective Technology
+doc_1313,Are audit logs protected from unauthorized modification?,NIST CSF – PR.PT Protective Technology
+doc_1314,Are communications and control networks isolated appropriately?,NIST CSF – PR.PT Protective Technology
+doc_1315,Are automated tools used to enforce security policies?,NIST CSF – PR.PT Protective Technology
+doc_1316,Are third-party access requirements documented and enforced?,NIST CSF – PR.AC – Third-Party Access
+doc_1317,Are vendor accounts monitored for unusual activity?,NIST CSF – PR.AC – Third-Party Access
+doc_1318,Are external connections authenticated and encrypted?,NIST CSF – PR.AC – Third-Party Access
+doc_1319,Are remote access tools secured and approved?,NIST CSF – PR.AC – Third-Party Access
+doc_1320,Are vendor privileges reviewed regularly?,NIST CSF – PR.AC – Third-Party Access
+doc_1321,Are email filtering technologies deployed to reduce phishing risk?,NIST CSF – PR.PT – Anti-Malware
+doc_1322,Are anti-malware tools updated regularly?,NIST CSF – PR.PT – Anti-Malware
+doc_1323,Are malware scans performed automatically?,NIST CSF – PR.PT – Anti-Malware
+doc_1324,Are users prohibited from disabling security tools?,NIST CSF – PR.PT – Anti-Malware
+doc_1325,Are malware incidents logged and analyzed?,NIST CSF – PR.PT – Anti-Malware
+doc_1326,Are unauthorized configuration changes detected automatically?,NIST CSF – PR.IP – Configuration Monitoring
+doc_1327,Are system baselines revalidated periodically?,NIST CSF – PR.IP – Configuration Monitoring
+doc_1328,Are drift detection alerts reviewed and remediated?,NIST CSF – PR.IP – Configuration Monitoring
+doc_1329,Are CI/CD pipelines secured to prevent unauthorized code changes?,NIST CSF – PR.IP – Configuration Monitoring
+doc_1330,Are configuration repositories version-controlled and access restricted?,NIST CSF – PR.IP – Configuration Monitoring
+doc_1331,Are logging requirements defined for critical systems?,NIST CSF – PR.PT – Audit Logging
+doc_1332,Are security logs aggregated into a SIEM?,NIST CSF – PR.PT – Audit Logging
+doc_1333,Are audit log storage locations protected from tampering?,NIST CSF – PR.PT – Audit Logging
+doc_1334,Are failed login attempts monitored for brute-force attacks?,NIST CSF – PR.PT – Audit Logging
+doc_1335,Are high-risk logs reviewed daily?,NIST CSF – PR.PT – Audit Logging
+doc_1336,Is secure engineering incorporated into development practices?,NIST CSF – PR.IP – Secure Development
+doc_1337,Are code repositories access-controlled?,NIST CSF – PR.IP – Secure Development
+doc_1338,Are static and dynamic code analysis tools used?,NIST CSF – PR.IP – Secure Development
+doc_1339,Are third-party components scanned for vulnerabilities?,NIST CSF – PR.IP – Secure Development
+doc_1340,Are secure coding standards enforced in development teams?,NIST CSF – PR.IP – Secure Development
+doc_1341,Are removable media usage policies documented?,NIST CSF – PR.PT – Removable Media
+doc_1342,Are USB ports restricted or monitored?,NIST CSF – PR.PT – Removable Media
+doc_1343,Are removable devices encrypted?,NIST CSF – PR.PT – Removable Media
+doc_1344,Are logs maintained for removable device usage?,NIST CSF – PR.PT – Removable Media
+doc_1345,Are unauthorized removable devices blocked automatically?,NIST CSF – PR.PT – Removable Media
+doc_1346,Are communications monitored to detect unauthorized data exfiltration?,NIST CSF – PR.DS – Information Flow Enforcement
+doc_1347,Are data leakage prevention (DLP) systems deployed?,NIST CSF – PR.DS – Information Flow Enforcement
+doc_1348,Are outbound traffic rules enforced by firewalls?,NIST CSF – PR.DS – Information Flow Enforcement
+doc_1349,Are sanctioned data transfer channels documented?,NIST CSF – PR.DS – Information Flow Enforcement
+doc_1350,Are sensitive transmissions restricted using policy controls?,NIST CSF – PR.DS – Information Flow Enforcement
+doc_1351,Are baseline behaviors defined for normal system operations?,NIST CSF – DE.AE Anomalies & Events
+doc_1352,Are deviations from baseline patterns automatically flagged?,NIST CSF – DE.AE Anomalies & Events
+doc_1353,Are anomaly alerts investigated promptly?,NIST CSF – DE.AE Anomalies & Events
+doc_1354,Are anomaly detection systems tuned to reduce false positives?,NIST CSF – DE.AE Anomalies & Events
+doc_1355,Are anomaly logs retained for forensic purposes?,NIST CSF – DE.AE Anomalies & Events
+doc_1356,Are security continuous monitoring tools deployed across the environment?,NIST CSF – DE.CM Security Continuous Monitoring
+doc_1357,Are network traffic flows monitored for malicious activity?,NIST CSF – DE.CM Security Continuous Monitoring
+doc_1358,Are user activities monitored for suspicious behavior?,NIST CSF – DE.CM Security Continuous Monitoring
+doc_1359,Are endpoint activities logged and analyzed?,NIST CSF – DE.CM Security Continuous Monitoring
+doc_1360,Are cloud security logs integrated into monitoring platforms?,NIST CSF – DE.CM Security Continuous Monitoring
+doc_1361,Is unauthorized connection scanning performed regularly?,NIST CSF – DE.CM – Network Monitoring
+doc_1362,Are unauthorized remote access attempts detected?,NIST CSF – DE.CM – Network Monitoring
+doc_1363,Are alerts generated for unusual outbound traffic?,NIST CSF – DE.CM – Network Monitoring
+doc_1364,Are firewall and IDS logs reviewed daily?,NIST CSF – DE.CM – Network Monitoring
+doc_1365,Are DNS queries monitored to detect C2 communication?,NIST CSF – DE.CM – Network Monitoring
+doc_1366,Are SIEM alerts prioritized based on risk?,NIST CSF – DE.CM – SIEM Monitoring
+doc_1367,Are correlation rules updated regularly?,NIST CSF – DE.CM – SIEM Monitoring
+doc_1368,Are log sources integrated from all critical systems?,NIST CSF – DE.CM – SIEM Monitoring
+doc_1369,Are critical events escalated automatically?,NIST CSF – DE.CM – SIEM Monitoring
+doc_1370,Are SIEM dashboards reviewed by SOC analysts?,NIST CSF – DE.CM – SIEM Monitoring
+doc_1371,Are detection processes regularly tested for effectiveness?,NIST CSF – DE.DP Detection Processes
+doc_1372,Are detection tools updated to address emerging threats?,NIST CSF – DE.DP Detection Processes
+doc_1373,Is detection role responsibility clearly assigned?,NIST CSF – DE.DP Detection Processes
+doc_1374,Are communication channels in place for detection alerts?,NIST CSF – DE.DP Detection Processes
+doc_1375,Are detection procedures documented and accessible?,NIST CSF – DE.DP Detection Processes
+doc_1376,Are incident response plans documented and approved?,NIST CSF – RS.RP Response Planning
+doc_1377,Is the incident response plan tested at least annually?,NIST CSF – RS.RP Response Planning
+doc_1378,Are response roles and responsibilities clearly defined?,NIST CSF – RS.RP Response Planning
+doc_1379,Are contact lists maintained for incident escalation?,NIST CSF – RS.RP Response Planning
+doc_1380,Are runbooks available for common incident types?,NIST CSF – RS.RP Response Planning
+doc_1381,Are communication procedures defined for incident reporting?,NIST CSF – RS.CO Communications
+doc_1382,Are legal and regulatory notification obligations documented?,NIST CSF – RS.CO Communications
+doc_1383,Are incident communications coordinated with external stakeholders?,NIST CSF – RS.CO Communications
+doc_1384,Are communication channels protected from unauthorized access?,NIST CSF – RS.CO Communications
+doc_1385,Are public communications approved through a formal process?,NIST CSF – RS.CO Communications
+doc_1386,Are incidents analyzed to determine root cause?,NIST CSF – RS.AN Analysis
+doc_1387,Are forensic techniques used when required?,NIST CSF – RS.AN Analysis
+doc_1388,Is malware analysis performed for infected systems?,NIST CSF – RS.AN Analysis
+doc_1389,Are timelines reconstructed for major incidents?,NIST CSF – RS.AN Analysis
+doc_1390,Is incident evidence preserved according to policy?,NIST CSF – RS.AN Analysis
+doc_1391,Are containment strategies documented?,NIST CSF – RS.MI Mitigation
+doc_1392,Are malicious hosts isolated quickly during incidents?,NIST CSF – RS.MI Mitigation
+doc_1393,Are compromised credentials revoked promptly?,NIST CSF – RS.MI Mitigation
+doc_1394,Are vulnerable systems patched during active incidents?,NIST CSF – RS.MI Mitigation
+doc_1395,Are long-term corrective actions identified and implemented?,NIST CSF – RS.MI Mitigation
+doc_1396,Are third parties notified when incidents may impact them?,NIST CSF – RS.IM Improvements
+doc_1397,Are lessons learned captured after incidents?,NIST CSF – RS.IM Improvements
+doc_1398,Are IR plans updated after major incidents?,NIST CSF – RS.IM Improvements
+doc_1399,Are detection gaps identified during post-incident reviews?,NIST CSF – RS.IM Improvements
+doc_1400,Are staff retrained after significant incident trends?,NIST CSF – RS.IM Improvements
+doc_1401,Are recovery plans documented and approved?,NIST CSF – RC.RP Recovery Planning
+doc_1402,Are restoration priorities defined for critical assets?,NIST CSF – RC.RP Recovery Planning
+doc_1403,Are recovery plans tested through exercises?,NIST CSF – RC.RP Recovery Planning
+doc_1404,Are failover and fallback procedures validated?,NIST CSF – RC.RP Recovery Planning
+doc_1405,Is backup integrity verified regularly?,NIST CSF – RC.RP Recovery Planning
+doc_1406,Are communication procedures defined for recovery operations?,NIST CSF – RC.CO Communications
+doc_1407,Are stakeholders notified when systems are restored?,NIST CSF – RC.CO Communications
+doc_1408,Are recovery status updates communicated to leadership?,NIST CSF – RC.CO Communications
+doc_1409,Are customer communications coordinated after outages?,NIST CSF – RC.CO Communications
+doc_1410,Are communication channels available during disasters?,NIST CSF – RC.CO Communications
+doc_1411,Are improvements identified after recovery events?,NIST CSF – RC.IM Improvements
+doc_1412,Are recovery plans updated following major restoration events?,NIST CSF – RC.IM Improvements
+doc_1413,Are resilience gaps identified through recovery testing?,NIST CSF – RC.IM Improvements
+doc_1414,Are updated recovery procedures communicated to staff?,NIST CSF – RC.IM Improvements
+doc_1415,Are cross-team reviews conducted after disaster scenarios?,NIST CSF – RC.IM Improvements
+doc_1416,Are recovery procedures integrated with business continuity plans?,NIST CSF – RC.IM Integration
+doc_1417,Are disaster recovery sites tested for readiness?,NIST CSF – RC.IM Integration
+doc_1418,Are third-party recovery dependencies evaluated?,NIST CSF – RC.IM Integration
+doc_1419,Are full restoration tests executed periodically?,NIST CSF – RC.IM Integration
+doc_1420,Are staff trained to execute recovery procedures quickly?,NIST CSF – RC.IM Integration
+doc_1421,Are cloud recovery procedures documented for each cloud provider?,NIST CSF – Cloud & Recovery
+doc_1422,Are cloud region failovers validated?,NIST CSF – Cloud & Recovery
+doc_1423,Are cloud backup settings checked for correctness?,NIST CSF – Cloud & Recovery
+doc_1424,Are cloud misconfigurations monitored continuously?,NIST CSF – Cloud & Recovery
+doc_1425,Are cloud DR tests executed with CSP participation?,NIST CSF – Cloud & Recovery
+doc_1426,Are cyber insurance requirements aligned with recovery needs?,NIST CSF – Recovery Governance
+doc_1427,Are legal or regulatory requirements integrated into recovery planning?,NIST CSF – Recovery Governance
+doc_1428,Are restoration timelines compliant with contractual obligations?,NIST CSF – Recovery Governance
+doc_1429,Are recovery metrics (RTO/RPO) monitored continuously?,NIST CSF – Recovery Governance
+doc_1430,Are recovery performance indicators reviewed by leadership?,NIST CSF – Recovery Governance
+doc_1431,Are forensic backups maintained for major incidents?,NIST CSF – Advanced IR & Forensics
+doc_1432,Are memory dumps captured during cyber events?,NIST CSF – Advanced IR & Forensics
+doc_1433,Are chain-of-custody procedures enforced during investigations?,NIST CSF – Advanced IR & Forensics
+doc_1434,Are compromised accounts flagged for deeper analysis?,NIST CSF – Advanced IR & Forensics
+doc_1435,Are forensics teams trained in cloud incident analysis?,NIST CSF – Advanced IR & Forensics
+doc_1436,Are continuous detection improvements implemented using threat feeds?,NIST CSF – Continuous Improvement
+doc_1437,Are new indicators of compromise added to detection tools regularly?,NIST CSF – Continuous Improvement
+doc_1438,Are lessons learned from industry breaches applied internally?,NIST CSF – Continuous Improvement
+doc_1439,Are SOC staffing levels reviewed based on alert volume trends?,NIST CSF – Continuous Improvement
+doc_1440,Are detection tuning sessions held regularly?,NIST CSF – Continuous Improvement
+doc_1441,Are backups isolated or immutable to defend against ransomware?,NIST CSF – Ransomware Resilience
+doc_1442,Are ransomware tabletop exercises conducted?,NIST CSF – Ransomware Resilience
+doc_1443,Are offline backups maintained for critical systems?,NIST CSF – Ransomware Resilience
+doc_1444,Is lateral movement detection configured?,NIST CSF – Ransomware Resilience
+doc_1445,Are segmentation controls used to isolate high-risk systems?,NIST CSF – Ransomware Resilience
+doc_1446,Are PII-specific detection capabilities implemented?,NIST CSF – Privacy Integration
+doc_1447,Are privacy breaches escalated through IR procedures?,NIST CSF – Privacy Integration
+doc_1448,Are privacy recovery procedures integrated with technical recovery?,NIST CSF – Privacy Integration
+doc_1449,Are privacy logs included in incident analysis?,NIST CSF – Privacy Integration
+doc_1450,Are privacy risks reassessed after incidents affecting PII?,NIST CSF – Privacy Integration

@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: semi-supervised-labeling-api
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      # Add your API keys here or use .env file
+      # - API_KEY=your_api_key_here
+      # - EMBEDDING_API_KEY=your_embedding_api_key_here
+      # - LLM_TEMPERATURE=0.0
+      # - ENDPOINT=http://host.docker.internal:11434  # For Ollama
+    env_file:
+      - .env  # Load environment variables from .env file
+    volumes:
+      # Persist uploaded files, embeddings, models, and outputs
+      - ./uploads:/app/uploads
+      - ./embeddings:/app/embeddings
+      - ./models:/app/models
+      - ./outputs:/app/outputs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

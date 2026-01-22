@@ -1,0 +1,201 @@
+id,text,title
+doc_1051,Is a formal information security program established and documented?,SOC2 – CC1 Governance
+doc_1052,Are security roles and responsibilities assigned within the organization?,SOC2 – CC1 Governance
+doc_1053,Are policies maintained to support SOC 2 trust principles?,SOC2 – CC1 Governance
+doc_1054,Are policies reviewed and approved by management annually?,SOC2 – CC1 Governance
+doc_1055,Are employees required to acknowledge security policies?,SOC2 – CC1 Governance
+doc_1056,Is a risk management program implemented to identify and assess risks?,SOC2 – CC2 Risk Management
+doc_1057,Are risk assessments performed at least annually?,SOC2 – CC2 Risk Management
+doc_1058,Are new technologies assessed for associated risks?,SOC2 – CC2 Risk Management
+doc_1059,Are risk treatments documented and approved?,SOC2 – CC2 Risk Management
+doc_1060,Are external threats and vulnerabilities incorporated in risk analysis?,SOC2 – CC2 Risk Management
+doc_1061,Does the organization maintain a formal code of conduct?,SOC2 – CC3 Ethics & Integrity
+doc_1062,Are employees trained on ethical behavior and reporting concerns?,SOC2 – CC3 Ethics & Integrity
+doc_1063,Is there a whistleblower mechanism for reporting violations?,SOC2 – CC3 Ethics & Integrity
+doc_1064,Are conflicts of interest identified and disclosed?,SOC2 – CC3 Ethics & Integrity
+doc_1065,Are ethics violations investigated promptly?,SOC2 – CC3 Ethics & Integrity
+doc_1066,Are job descriptions documented with required competencies?,SOC2 – CC4 People Management
+doc_1067,Are background checks conducted for staff with access to sensitive systems?,SOC2 – CC4 People Management
+doc_1068,Are employees trained in job-specific security practices?,SOC2 – CC4 People Management
+doc_1069,Are performance evaluations conducted to ensure competency?,SOC2 – CC4 People Management
+doc_1070,Are disciplinary actions enforced for non-compliance?,SOC2 – CC4 People Management
+doc_1071,Does the organization maintain security awareness training?,SOC2 – CC5 Awareness & Training
+doc_1072,Is training required at onboarding?,SOC2 – CC5 Awareness & Training
+doc_1073,Is annual refresher training mandatory?,SOC2 – CC5 Awareness & Training
+doc_1074,Are employees trained on phishing and social engineering?,SOC2 – CC5 Awareness & Training
+doc_1075,Is training effectiveness measured?,SOC2 – CC5 Awareness & Training
+doc_1076,Are logical access controls implemented to restrict access to authorized users?,SOC2 – CC6 Logical Access
+doc_1077,Are user accounts provisioned based on least privilege?,SOC2 – CC6 Logical Access
+doc_1078,Are access rights approved prior to assignment?,SOC2 – CC6 Logical Access
+doc_1079,Are periodic access reviews performed for all systems?,SOC2 – CC6 Logical Access
+doc_1080,Are unused or dormant accounts disabled promptly?,SOC2 – CC6 Logical Access
+doc_1081,Is MFA enforced for privileged or remote access?,SOC2 – CC6 Logical Access – Authentication
+doc_1082,Are password requirements aligned with industry standards?,SOC2 – CC6 Logical Access – Authentication
+doc_1083,Are authentication logs monitored for suspicious activity?,SOC2 – CC6 Logical Access – Authentication
+doc_1084,Are default credentials prohibited?,SOC2 – CC6 Logical Access – Authentication
+doc_1085,Are service accounts centrally managed and restricted?,SOC2 – CC6 Logical Access – Authentication
+doc_1086,Is physical access restricted to authorized personnel?,SOC2 – CC6 Physical Access
+doc_1087,Are visitor logs maintained and reviewed?,SOC2 – CC6 Physical Access
+doc_1088,Are facilities equipped with surveillance systems?,SOC2 – CC6 Physical Access
+doc_1089,"Are physical access points protected by security controls (badges, biometrics)?",SOC2 – CC6 Physical Access
+doc_1090,Are physical access permissions reviewed periodically?,SOC2 – CC6 Physical Access
+doc_1091,Are system changes controlled through a formal change management process?,SOC2 – CC7 Change Management
+doc_1092,Are changes reviewed and approved prior to implementation?,SOC2 – CC7 Change Management
+doc_1093,Are emergency changes documented and reviewed after implementation?,SOC2 – CC7 Change Management
+doc_1094,Are changes tested in non-production environments?,SOC2 – CC7 Change Management
+doc_1095,Are configuration changes logged and monitored?,SOC2 – CC7 Change Management
+doc_1096,Are production deployments segregated from development environments?,SOC2 – CC7 SDLC
+doc_1097,Are developers prevented from accessing production data unless approved?,SOC2 – CC7 SDLC
+doc_1098,Are code reviews performed prior to deployment?,SOC2 – CC7 SDLC
+doc_1099,Are secure development standards implemented?,SOC2 – CC7 SDLC
+doc_1100,Are third-party libraries evaluated for security risks?,SOC2 – CC7 SDLC
+doc_1101,Is system activity monitored continuously?,SOC2 – CC8 Monitoring & Detection
+doc_1102,Are system logs correlated through SIEM or equivalent tools?,SOC2 – CC8 Monitoring & Detection
+doc_1103,Are alerts generated for abnormal or suspicious activity?,SOC2 – CC8 Monitoring & Detection
+doc_1104,Is monitoring of privileged users implemented?,SOC2 – CC8 Monitoring & Detection
+doc_1105,Are log retention periods defined and enforced?,SOC2 – CC8 Monitoring & Detection
+doc_1106,Are incidents tracked through a formal incident response process?,SOC2 – CC9 Incident Response
+doc_1107,Are incident severity levels defined?,SOC2 – CC9 Incident Response
+doc_1108,Are incident response roles assigned?,SOC2 – CC9 Incident Response
+doc_1109,"Are incidents logged with dates, actions, and outcomes?",SOC2 – CC9 Incident Response
+doc_1110,Are major incidents escalated to senior management?,SOC2 – CC9 Incident Response
+doc_1111,Is an incident response plan documented and maintained?,SOC2 – CC9 Incident Planning
+doc_1112,"Is the incident response plan tested (e.g., tabletop exercises)?",SOC2 – CC9 Incident Planning
+doc_1113,Are communication procedures established for incident escalation?,SOC2 – CC9 Incident Planning
+doc_1114,Are post-incident reviews conducted to identify improvements?,SOC2 – CC9 Incident Planning
+doc_1115,Is evidence preserved in accordance with legal requirements?,SOC2 – CC9 Incident Planning
+doc_1116,Are vendors assessed prior to onboarding?,SOC2 – Vendor Management
+doc_1117,Are vendor contracts reviewed for security requirements?,SOC2 – Vendor Management
+doc_1118,Are third-party risks re-evaluated periodically?,SOC2 – Vendor Management
+doc_1119,Are vendors required to notify of security breaches?,SOC2 – Vendor Management
+doc_1120,Are vendor performance and compliance monitored?,SOC2 – Vendor Management
+doc_1121,Are network firewalls implemented and maintained?,SOC2 – Network Security
+doc_1122,Are IDS/IPS systems deployed to detect threats?,SOC2 – Network Security
+doc_1123,Is network segmentation used to isolate critical systems?,SOC2 – Network Security
+doc_1124,Are external connections restricted and monitored?,SOC2 – Network Security
+doc_1125,Are wireless networks secured with strong authentication?,SOC2 – Network Security
+doc_1126,Are data backups performed regularly?,SOC2 – Data Protection
+doc_1127,Are backup data encrypted?,SOC2 – Data Protection
+doc_1128,Are backup restorations tested periodically?,SOC2 – Data Protection
+doc_1129,Is backup access restricted to authorized personnel?,SOC2 – Data Protection
+doc_1130,Are backup locations protected from environmental threats?,SOC2 – Data Protection
+doc_1131,Are encryption standards defined for data in transit?,SOC2 – Encryption Controls
+doc_1132,Are encryption standards defined for data at rest?,SOC2 – Encryption Controls
+doc_1133,Are encryption keys managed securely?,SOC2 – Encryption Controls
+doc_1134,Are key rotation procedures implemented?,SOC2 – Encryption Controls
+doc_1135,Are access logs maintained for KMS operations?,SOC2 – Encryption Controls
+doc_1136,Are vulnerability scans performed regularly?,SOC2 – Vulnerability Management
+doc_1137,Are system patches applied in accordance with policy?,SOC2 – Vulnerability Management
+doc_1138,Are critical vulnerabilities remediated quickly?,SOC2 – Vulnerability Management
+doc_1139,Are penetration tests conducted annually?,SOC2 – Vulnerability Management
+doc_1140,Are remediation activities tracked to closure?,SOC2 – Vulnerability Management
+doc_1141,Are system capacity and performance monitored?,SOC2 – Availability Controls
+doc_1142,Are redundancies implemented to ensure high availability?,SOC2 – Availability Controls
+doc_1143,Are service uptime metrics defined and monitored?,SOC2 – Availability Controls
+doc_1144,Are outage trends analyzed for underlying issues?,SOC2 – Availability Controls
+doc_1145,Are capacity plans in place for growing demand?,SOC2 – Availability Controls
+doc_1146,Are system maintenance activities scheduled and documented?,SOC2 – System Operations
+doc_1147,Are maintenance windows communicated to stakeholders?,SOC2 – System Operations
+doc_1148,Are operational processes aligned with SLAs?,SOC2 – System Operations
+doc_1149,Are operational failures logged and escalated?,SOC2 – System Operations
+doc_1150,Are automated monitoring tools used for system health checks?,SOC2 – System Operations
+doc_1151,Are service availability requirements defined within SLAs?,SOC2 – Availability (A1)
+doc_1152,Are system uptime commitments documented and monitored?,SOC2 – Availability (A1)
+doc_1153,Are redundant systems used to ensure service continuity?,SOC2 – Availability (A1)
+doc_1154,"Are environmental controls (HVAC, fire suppression) implemented in data centers?",SOC2 – Availability (A1)
+doc_1155,"Are power backups (UPS, generators) tested regularly?",SOC2 – Availability (A1)
+doc_1156,Are DDoS protection mechanisms implemented?,SOC2 – Availability – Resilience
+doc_1157,Are high-availability architectures used for critical systems?,SOC2 – Availability – Resilience
+doc_1158,Are network redundancies implemented across different carriers?,SOC2 – Availability – Resilience
+doc_1159,Are availability risks assessed periodically?,SOC2 – Availability – Resilience
+doc_1160,Are incident response plans specific to availability disruptions?,SOC2 – Availability – Resilience
+doc_1161,Are business continuity plans documented and accessible?,SOC2 – Availability – Business Continuity
+doc_1162,Are BCP exercises conducted at least annually?,SOC2 – Availability – Business Continuity
+doc_1163,Are recovery procedures validated through testing?,SOC2 – Availability – Business Continuity
+doc_1164,Are BCP updates communicated to affected staff?,SOC2 – Availability – Business Continuity
+doc_1165,Are RTO and RPO defined for critical systems?,SOC2 – Availability – Business Continuity
+doc_1166,Is processing integrity defined for critical workflows?,SOC2 – Processing Integrity (PI1)
+doc_1167,Are processes designed to produce complete and accurate results?,SOC2 – Processing Integrity (PI1)
+doc_1168,Are automated inputs validated before processing?,SOC2 – Processing Integrity (PI1)
+doc_1169,Are outputs reviewed for accuracy and completeness?,SOC2 – Processing Integrity (PI1)
+doc_1170,Are processing errors logged and corrected promptly?,SOC2 – Processing Integrity (PI1)
+doc_1171,Are edit checks implemented for data inputs?,SOC2 – Processing Integrity – Input Controls
+doc_1172,Are unauthorized data submissions prevented?,SOC2 – Processing Integrity – Input Controls
+doc_1173,Are data validation rules applied consistently?,SOC2 – Processing Integrity – Input Controls
+doc_1174,Are input sources authenticated before processing?,SOC2 – Processing Integrity – Input Controls
+doc_1175,Are rejected transactions logged and monitored?,SOC2 – Processing Integrity – Input Controls
+doc_1176,Is processing performed in the correct sequence?,SOC2 – Processing Integrity – Processing Controls
+doc_1177,Are batch jobs monitored for timely completion?,SOC2 – Processing Integrity – Processing Controls
+doc_1178,Are exceptions investigated and resolved?,SOC2 – Processing Integrity – Processing Controls
+doc_1179,Are processing workflows protected from unauthorized modification?,SOC2 – Processing Integrity – Processing Controls
+doc_1180,Are automatic retries implemented for failed transactions?,SOC2 – Processing Integrity – Processing Controls
+doc_1181,Are output reports reviewed for accuracy?,SOC2 – Processing Integrity – Output Controls
+doc_1182,Are output files encrypted when delivered externally?,SOC2 – Processing Integrity – Output Controls
+doc_1183,Are unauthorized output transmissions prevented?,SOC2 – Processing Integrity – Output Controls
+doc_1184,Are output delivery failures logged and reported?,SOC2 – Processing Integrity – Output Controls
+doc_1185,Are output recipients validated before distribution?,SOC2 – Processing Integrity – Output Controls
+doc_1186,Is confidential information classified and documented?,SOC2 – Confidentiality (C1)
+doc_1187,Are confidentiality agreements required for relevant staff?,SOC2 – Confidentiality (C1)
+doc_1188,Are confidentiality requirements included in third-party contracts?,SOC2 – Confidentiality (C1)
+doc_1189,Are access rights restricted based on confidentiality levels?,SOC2 – Confidentiality (C1)
+doc_1190,Are confidentiality policies reviewed annually?,SOC2 – Confidentiality (C1)
+doc_1191,Is confidential data encrypted at rest?,SOC2 – Confidentiality – Data Handling
+doc_1192,Is confidential data encrypted during transmission?,SOC2 – Confidentiality – Data Handling
+doc_1193,Are data masking techniques applied where necessary?,SOC2 – Confidentiality – Data Handling
+doc_1194,Are anonymization or pseudonymization methods used?,SOC2 – Confidentiality – Data Handling
+doc_1195,Are stored confidential records protected from unauthorized access?,SOC2 – Confidentiality – Data Handling
+doc_1196,Is confidential data disposed securely?,SOC2 – Confidentiality – Disposal
+doc_1197,Are disposal methods aligned with regulatory standards?,SOC2 – Confidentiality – Disposal
+doc_1198,Are certificates of destruction maintained?,SOC2 – Confidentiality – Disposal
+doc_1199,Are archived confidential datasets encrypted?,SOC2 – Confidentiality – Disposal
+doc_1200,Are deletion processes applied across backups and replicas?,SOC2 – Confidentiality – Disposal
+doc_1201,Are privacy notices published and accessible to data subjects?,SOC2 – Privacy (P1)
+doc_1202,Do privacy notices describe PII collection and use?,SOC2 – Privacy (P1)
+doc_1203,Are privacy notices updated when practices change?,SOC2 – Privacy (P1)
+doc_1204,Do privacy notices identify how individuals can exercise their rights?,SOC2 – Privacy (P1)
+doc_1205,Is privacy policy compliance reviewed periodically?,SOC2 – Privacy (P1)
+doc_1206,Is explicit consent collected where required?,SOC2 – Privacy – Consent
+doc_1207,Are consent records stored and auditable?,SOC2 – Privacy – Consent
+doc_1208,Are data subjects able to withdraw consent?,SOC2 – Privacy – Consent
+doc_1209,Is processing halted when consent is withdrawn?,SOC2 – Privacy – Consent
+doc_1210,Are consent processes reviewed for legal compliance?,SOC2 – Privacy – Consent
+doc_1211,Are procedures implemented to allow access to PII upon request?,SOC2 – Privacy – Data Subject Rights
+doc_1212,Are correction and update mechanisms available for PII?,SOC2 – Privacy – Data Subject Rights
+doc_1213,Are deletion requests processed within required timelines?,SOC2 – Privacy – Data Subject Rights
+doc_1214,Are processing restriction requests supported?,SOC2 – Privacy – Data Subject Rights
+doc_1215,Is data portability supported where applicable?,SOC2 – Privacy – Data Subject Rights
+doc_1216,Are PII collections limited to what is necessary for the service?,SOC2 – Privacy – Collection
+doc_1217,Are indirect PII collections disclosed to the data subject?,SOC2 – Privacy – Collection
+doc_1218,Is sensitive PII collected only with specific justification?,SOC2 – Privacy – Collection
+doc_1219,Are PII collection points secured?,SOC2 – Privacy – Collection
+doc_1220,Is PII validated for quality and relevance upon collection?,SOC2 – Privacy – Collection
+doc_1221,Is PII used only for disclosed purposes?,SOC2 – Privacy – Use and Retention
+doc_1222,Are retention durations defined for each type of PII?,SOC2 – Privacy – Use and Retention
+doc_1223,Is PII deleted once retention periods expire?,SOC2 – Privacy – Use and Retention
+doc_1224,Are PII retention exceptions documented?,SOC2 – Privacy – Use and Retention
+doc_1225,Are PII usage logs maintained for auditability?,SOC2 – Privacy – Use and Retention
+doc_1226,Are disclosures of PII limited to authorized parties?,SOC2 – Privacy – Disclosure
+doc_1227,Are third-party disclosures approved and documented?,SOC2 – Privacy – Disclosure
+doc_1228,Are onward transfers prohibited without approval?,SOC2 – Privacy – Disclosure
+doc_1229,Are PII disclosure events logged and reviewed?,SOC2 – Privacy – Disclosure
+doc_1230,Are government data requests handled according to policy?,SOC2 – Privacy – Disclosure
+doc_1231,Are privacy breach events reported within defined timelines?,SOC2 – Privacy – Breach Notification
+doc_1232,Are impact assessments conducted for PII breaches?,SOC2 – Privacy – Breach Notification
+doc_1233,Are data subjects notified where required by law?,SOC2 – Privacy – Breach Notification
+doc_1234,Are breach logs maintained?,SOC2 – Privacy – Breach Notification
+doc_1235,Are root cause analyses conducted after breaches?,SOC2 – Privacy – Breach Notification
+doc_1236,Are subprocessors required to maintain SOC 2 equivalent controls?,SOC2 – Privacy – Subprocessor Management
+doc_1237,Are subprocessors monitored for privacy compliance?,SOC2 – Privacy – Subprocessor Management
+doc_1238,Are subprocessors required to support data subject rights?,SOC2 – Privacy – Subprocessor Management
+doc_1239,Are contracts with subprocessors reviewed annually?,SOC2 – Privacy – Subprocessor Management
+doc_1240,Are subprocessors required to notify of privacy breaches?,SOC2 – Privacy – Subprocessor Management
+doc_1241,Are cloud service configurations reviewed for SOC 2 alignment?,SOC2 – Cloud Controls
+doc_1242,Are cloud tenant isolation controls implemented?,SOC2 – Cloud Controls
+doc_1243,Are cloud logs retained and accessible for audits?,SOC2 – Cloud Controls
+doc_1244,Are customer-managed keys supported for cloud encryption?,SOC2 – Cloud Controls
+doc_1245,Are cloud vulnerabilities tracked and remediated promptly?,SOC2 – Cloud Controls
+doc_1246,Are contractual terms aligned with SOC 2 requirements?,SOC2 – Contractual Controls
+doc_1247,Do contracts specify customer ownership of data?,SOC2 – Contractual Controls
+doc_1248,Are SLAs aligned with availability commitments?,SOC2 – Contractual Controls
+doc_1249,Do contracts include breach notification obligations?,SOC2 – Contractual Controls
+doc_1250,Do contracts require vendors to meet minimum security standards?,SOC2 – Contractual Controls
