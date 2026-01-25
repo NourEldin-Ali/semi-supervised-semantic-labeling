@@ -6,7 +6,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import embeddings, clustering, labeling, classification, evaluation, workflow
+from app.routers import embeddings, clustering, labeling, classification, evaluation, workflow, select_question
 
 # Load environment variables from .env file
 # In Docker, environment variables are injected via docker-compose env_file
@@ -45,6 +45,7 @@ app.include_router(labeling.router, prefix="/api/v1", tags=["labeling"])
 app.include_router(classification.router, prefix="/api/v1", tags=["classification"])
 app.include_router(evaluation.router, prefix="/api/v1", tags=["evaluation"])
 app.include_router(workflow.router, prefix="/api/v1", tags=["workflow"])
+app.include_router(select_question.router, prefix="/api/v1", tags=["select-question"])
 
 
 @app.get("/")

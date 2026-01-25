@@ -65,9 +65,11 @@ export default function EvaluationPage() {
     const m2 = result.method2_name ?? 'Method 2';
     const headers = [
       'Question ID',
-      `${m1} Relevance`, `${m1} Completeness`, `${m1} Correctness`, `${m1} Generalizability`,
+      `${m1} Relevance`, `${m1} Correctness`, `${m1} Coverage (Key Concepts)`,
+      `${m1} Taxonomy Fit & Granularity`, `${m1} Actionability (Audit Mapping)`,
       `${m1} Reasoning`, `${m1} Labels`,
-      `${m2} Relevance`, `${m2} Completeness`, `${m2} Correctness`, `${m2} Generalizability`,
+      `${m2} Relevance`, `${m2} Correctness`, `${m2} Coverage (Key Concepts)`,
+      `${m2} Taxonomy Fit & Granularity`, `${m2} Actionability (Audit Mapping)`,
       `${m2} Reasoning`, `${m2} Labels`,
     ];
     const rows: string[] = [headers.map(escapeCsv).join(',')];
@@ -76,9 +78,9 @@ export default function EvaluationPage() {
       const r2 = q.method2;
       rows.push([
         escapeCsv(q.id),
-        r1.relevance, r1.completeness, r1.correctness, r1.generalizability,
+        r1.relevance, r1.correctness, r1.coverage, r1.taxonomy_fit_granularity, r1.actionability,
         escapeCsv(r1.reasoning ?? ''), escapeCsv((r1.labels ?? []).join(', ')),
-        r2.relevance, r2.completeness, r2.correctness, r2.generalizability,
+        r2.relevance, r2.correctness, r2.coverage, r2.taxonomy_fit_granularity, r2.actionability,
         escapeCsv(r2.reasoning ?? ''), escapeCsv((r2.labels ?? []).join(', ')),
       ].join(','));
     }
@@ -87,11 +89,13 @@ export default function EvaluationPage() {
       rows.push('');
       rows.push([
         'AVERAGE',
-        avg.method1.relevance.toFixed(2), avg.method1.completeness.toFixed(2),
-        avg.method1.correctness.toFixed(2), avg.method1.generalizability.toFixed(2),
+        avg.method1.relevance.toFixed(2), avg.method1.correctness.toFixed(2),
+        avg.method1.coverage.toFixed(2), avg.method1.taxonomy_fit_granularity.toFixed(2),
+        avg.method1.actionability.toFixed(2),
         '', '',
-        avg.method2.relevance.toFixed(2), avg.method2.completeness.toFixed(2),
-        avg.method2.correctness.toFixed(2), avg.method2.generalizability.toFixed(2),
+        avg.method2.relevance.toFixed(2), avg.method2.correctness.toFixed(2),
+        avg.method2.coverage.toFixed(2), avg.method2.taxonomy_fit_granularity.toFixed(2),
+        avg.method2.actionability.toFixed(2),
         '', '',
       ].join(','));
     }
@@ -257,9 +261,10 @@ export default function EvaluationPage() {
                   <h4 className="font-semibold mb-3">{result.method1_name}</h4>
                   <div className="space-y-2">
                     <MetricRow label="Relevance" value={result.average_metrics.method1.relevance} max={5} />
-                    <MetricRow label="Completeness" value={result.average_metrics.method1.completeness} max={5} />
                     <MetricRow label="Correctness" value={result.average_metrics.method1.correctness} max={5} />
-                    <MetricRow label="Generalizability" value={result.average_metrics.method1.generalizability} max={5} />
+                    <MetricRow label="Coverage (Key Concepts)" value={result.average_metrics.method1.coverage} max={5} />
+                    <MetricRow label="Taxonomy Fit & Granularity" value={result.average_metrics.method1.taxonomy_fit_granularity} max={5} />
+                    <MetricRow label="Actionability (Audit Mapping)" value={result.average_metrics.method1.actionability} max={5} />
                   </div>
                 </div>
 
@@ -268,9 +273,10 @@ export default function EvaluationPage() {
                   <h4 className="font-semibold mb-3">{result.method2_name}</h4>
                   <div className="space-y-2">
                     <MetricRow label="Relevance" value={result.average_metrics.method2.relevance} max={5} />
-                    <MetricRow label="Completeness" value={result.average_metrics.method2.completeness} max={5} />
                     <MetricRow label="Correctness" value={result.average_metrics.method2.correctness} max={5} />
-                    <MetricRow label="Generalizability" value={result.average_metrics.method2.generalizability} max={5} />
+                    <MetricRow label="Coverage (Key Concepts)" value={result.average_metrics.method2.coverage} max={5} />
+                    <MetricRow label="Taxonomy Fit & Granularity" value={result.average_metrics.method2.taxonomy_fit_granularity} max={5} />
+                    <MetricRow label="Actionability (Audit Mapping)" value={result.average_metrics.method2.actionability} max={5} />
                   </div>
                 </div>
               </div>
@@ -303,11 +309,12 @@ export default function EvaluationPage() {
                             <div className="text-xs text-gray-500">
                               Labels: {item.method1.labels.join(', ') || 'None'}
                             </div>
-                            <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div className="grid grid-cols-3 gap-2 text-xs">
                               <div>Rel: {item.method1.relevance}/5</div>
-                              <div>Com: {item.method1.completeness}/5</div>
                               <div>Cor: {item.method1.correctness}/5</div>
-                              <div>Gen: {item.method1.generalizability}/5</div>
+                              <div>Cov: {item.method1.coverage}/5</div>
+                              <div>Tax: {item.method1.taxonomy_fit_granularity}/5</div>
+                              <div>Act: {item.method1.actionability}/5</div>
                             </div>
                             <div className="text-xs text-gray-600 italic mt-1">
                               {item.method1.reasoning}
@@ -319,11 +326,12 @@ export default function EvaluationPage() {
                             <div className="text-xs text-gray-500">
                               Labels: {item.method2.labels.join(', ') || 'None'}
                             </div>
-                            <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div className="grid grid-cols-3 gap-2 text-xs">
                               <div>Rel: {item.method2.relevance}/5</div>
-                              <div>Com: {item.method2.completeness}/5</div>
                               <div>Cor: {item.method2.correctness}/5</div>
-                              <div>Gen: {item.method2.generalizability}/5</div>
+                              <div>Cov: {item.method2.coverage}/5</div>
+                              <div>Tax: {item.method2.taxonomy_fit_granularity}/5</div>
+                              <div>Act: {item.method2.actionability}/5</div>
                             </div>
                             <div className="text-xs text-gray-600 italic mt-1">
                               {item.method2.reasoning}

@@ -32,9 +32,10 @@ async def compare_two_csv_files(
     
     Returns detailed evaluation metrics for each question including:
     - Relevance scores (1-5)
-    - Completeness scores (1-5)
     - Correctness scores (1-5)
-    - Generalizability scores (1-5)
+    - Coverage (key concepts) scores (1-5)
+    - Taxonomy fit & granularity scores (1-5)
+    - Actionability (audit mapping) scores (1-5)
     - Reasoning for each evaluation
     - Average metrics across all questions
     

@@ -84,15 +84,17 @@ export interface EvaluationResponse {
     average_metrics: {
       method1: {
         relevance: number;
-        completeness: number;
         correctness: number;
-        generalizability: number;
+        coverage: number;
+        taxonomy_fit_granularity: number;
+        actionability: number;
       };
       method2: {
         relevance: number;
-        completeness: number;
         correctness: number;
-        generalizability: number;
+        coverage: number;
+        taxonomy_fit_granularity: number;
+        actionability: number;
       };
     };
     question_metrics: Array<{
@@ -100,23 +102,40 @@ export interface EvaluationResponse {
       method1: {
         method: string;
         relevance: number;
-        completeness: number;
         correctness: number;
-        generalizability: number;
+        coverage: number;
+        taxonomy_fit_granularity: number;
+        actionability: number;
         reasoning: string;
         labels: string[];
       };
       method2: {
         method: string;
         relevance: number;
-        completeness: number;
         correctness: number;
-        generalizability: number;
+        coverage: number;
+        taxonomy_fit_granularity: number;
+        actionability: number;
         reasoning: string;
         labels: string[];
       };
     }>;
   };
+}
+
+export interface SelectQuestionResult {
+  id: string;
+  question: string;
+  score?: number | null;
+  labels?: string[];
+  matched_labels?: string[];
+}
+
+export interface SelectQuestionResponse extends RunStats {
+  message: string;
+  method: 'bm25' | 'embedding' | 'label_embedding';
+  results: SelectQuestionResult[];
+  total_results: number;
 }
 
 // Embeddings API
@@ -185,6 +204,22 @@ export interface FullPipelineResponse {
 export const workflowApi = {
   executeFullPipeline: async (formData: FormData): Promise<FullPipelineResponse> => {
     const response = await api.post<FullPipelineResponse>('/workflow/full-pipeline', formData);
+    return response.data;
+  },
+};
+
+// Select Question API
+export const selectQuestionApi = {
+  bm25: async (formData: FormData): Promise<SelectQuestionResponse> => {
+    const response = await api.post<SelectQuestionResponse>('/select-question/bm25', formData);
+    return response.data;
+  },
+  embedding: async (formData: FormData): Promise<SelectQuestionResponse> => {
+    const response = await api.post<SelectQuestionResponse>('/select-question/embedding', formData);
+    return response.data;
+  },
+  labelEmbedding: async (formData: FormData): Promise<SelectQuestionResponse> => {
+    const response = await api.post<SelectQuestionResponse>('/select-question/label-embedding', formData);
     return response.data;
   },
 };

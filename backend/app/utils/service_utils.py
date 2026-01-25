@@ -21,6 +21,9 @@ from enums.embed_type import EmbedType
 from enums.llm_type import LLMType
 from src.llm.models.labeled_question import QuestionLabels
 from src.llm.nodes.llm_evaluator import evaluate_one_pair
+from src.select_question.bm25_selector import select_questions_bm25
+from src.select_question.embedding_selector import select_questions_by_embedding
+from src.select_question.label_embedding_selector import select_questions_by_label_embedding
 
 
 def generate_embeddings_from_csv(
@@ -374,14 +377,16 @@ def evaluate_with_llm_judge(
     seen_ids: Set[str] = set()
     question_metrics = []
     metric_totals = {
-        'relevance_method1': 0,
-        'completeness_method1': 0,
-        'correctness_method1': 0,
-        'generalizability_method1': 0,
-        'relevance_method2': 0,
-        'completeness_method2': 0,
-        'correctness_method2': 0,
-        'generalizability_method2': 0,
+        'relevance_method1': 0.0,
+        'correctness_method1': 0.0,
+        'coverage_method1': 0.0,
+        'taxonomy_fit_granularity_method1': 0.0,
+        'actionability_method1': 0.0,
+        'relevance_method2': 0.0,
+        'correctness_method2': 0.0,
+        'coverage_method2': 0.0,
+        'taxonomy_fit_granularity_method2': 0.0,
+        'actionability_method2': 0.0,
     }
 
     for result in evaluation_results:
@@ -395,18 +400,20 @@ def evaluate_with_llm_judge(
             'method1': {
                 'method': eval1.method,
                 'relevance': eval1.relevance,
-                'completeness': eval1.completeness,
                 'correctness': eval1.correctness,
-                'generalizability': eval1.generalizability,
+                'coverage': eval1.coverage,
+                'taxonomy_fit_granularity': eval1.taxonomy_fit_granularity,
+                'actionability': eval1.actionability,
                 'reasoning': eval1.reasoning,
                 'labels': eval1.labels_considered or []
             },
             'method2': {
                 'method': eval2.method,
                 'relevance': eval2.relevance,
-                'completeness': eval2.completeness,
                 'correctness': eval2.correctness,
-                'generalizability': eval2.generalizability,
+                'coverage': eval2.coverage,
+                'taxonomy_fit_granularity': eval2.taxonomy_fit_granularity,
+                'actionability': eval2.actionability,
                 'reasoning': eval2.reasoning,
                 'labels': eval2.labels_considered or []
             }
@@ -414,14 +421,16 @@ def evaluate_with_llm_judge(
         
         # Accumulate totals for averages
         metric_totals['relevance_method1'] += eval1.relevance
-        metric_totals['completeness_method1'] += eval1.completeness
         metric_totals['correctness_method1'] += eval1.correctness
-        metric_totals['generalizability_method1'] += eval1.generalizability
+        metric_totals['coverage_method1'] += eval1.coverage
+        metric_totals['taxonomy_fit_granularity_method1'] += eval1.taxonomy_fit_granularity
+        metric_totals['actionability_method1'] += eval1.actionability
         
         metric_totals['relevance_method2'] += eval2.relevance
-        metric_totals['completeness_method2'] += eval2.completeness
         metric_totals['correctness_method2'] += eval2.correctness
-        metric_totals['generalizability_method2'] += eval2.generalizability
+        metric_totals['coverage_method2'] += eval2.coverage
+        metric_totals['taxonomy_fit_granularity_method2'] += eval2.taxonomy_fit_granularity
+        metric_totals['actionability_method2'] += eval2.actionability
     
     num_questions = len(question_metrics)
     
@@ -429,15 +438,17 @@ def evaluate_with_llm_judge(
     averages = {
         'method1': {
             'relevance': metric_totals['relevance_method1'] / num_questions if num_questions > 0 else 0,
-            'completeness': metric_totals['completeness_method1'] / num_questions if num_questions > 0 else 0,
             'correctness': metric_totals['correctness_method1'] / num_questions if num_questions > 0 else 0,
-            'generalizability': metric_totals['generalizability_method1'] / num_questions if num_questions > 0 else 0,
+            'coverage': metric_totals['coverage_method1'] / num_questions if num_questions > 0 else 0,
+            'taxonomy_fit_granularity': metric_totals['taxonomy_fit_granularity_method1'] / num_questions if num_questions > 0 else 0,
+            'actionability': metric_totals['actionability_method1'] / num_questions if num_questions > 0 else 0,
         },
         'method2': {
             'relevance': metric_totals['relevance_method2'] / num_questions if num_questions > 0 else 0,
-            'completeness': metric_totals['completeness_method2'] / num_questions if num_questions > 0 else 0,
             'correctness': metric_totals['correctness_method2'] / num_questions if num_questions > 0 else 0,
-            'generalizability': metric_totals['generalizability_method2'] / num_questions if num_questions > 0 else 0,
+            'coverage': metric_totals['coverage_method2'] / num_questions if num_questions > 0 else 0,
+            'taxonomy_fit_granularity': metric_totals['taxonomy_fit_granularity_method2'] / num_questions if num_questions > 0 else 0,
+            'actionability': metric_totals['actionability_method2'] / num_questions if num_questions > 0 else 0,
         }
     }
     
@@ -553,3 +564,82 @@ def compare_csv_files(
         ) / total_common if total_common > 0 else 0.0,
         "comparison_details": comparison_details
     }
+
+
+def select_questions_bm25_service(
+    df: pd.DataFrame,
+    user_need: str,
+    text_column: str,
+    id_column: str,
+    label_column: str | None = None,
+    top_k: int = 5,
+) -> List[Dict[str, Any]]:
+    """Select top questions with BM25."""
+    return select_questions_bm25(
+        user_need=user_need,
+        csv_input=df,
+        text_column=text_column,
+        id_column=id_column,
+        label_column=label_column,
+        top_k=top_k,
+    )
+
+
+def select_questions_embedding_service(
+    df: pd.DataFrame,
+    user_need: str,
+    embedding_model: str,
+    embed_type: EmbedType | str,
+    api_key: str | None = None,
+    endpoint: str | None = None,
+    text_column: str = "text",
+    id_column: str = "id",
+    label_column: str | None = None,
+    batch_size: int = 32,
+    top_k: int = 5,
+) -> List[Dict[str, Any]]:
+    """Select top questions using embeddings."""
+    return select_questions_by_embedding(
+        user_need=user_need,
+        csv_input=df,
+        embedding_model=embedding_model,
+        embed_type=embed_type,
+        api_key=api_key,
+        endpoint=endpoint,
+        text_column=text_column,
+        id_column=id_column,
+        label_column=label_column,
+        batch_size=batch_size,
+        top_k=top_k,
+    )
+
+
+def select_questions_label_embedding_service(
+    df: pd.DataFrame,
+    user_need: str,
+    embedding_model: str,
+    embed_type: EmbedType | str,
+    api_key: str | None = None,
+    endpoint: str | None = None,
+    text_column: str = "text",
+    id_column: str = "id",
+    label_column: str = "labels",
+    batch_size: int = 32,
+    top_k_labels: int = 5,
+    top_k_questions: int = 5,
+) -> List[Dict[str, Any]]:
+    """Select top questions using label embeddings."""
+    return select_questions_by_label_embedding(
+        user_need=user_need,
+        csv_input=df,
+        embedding_model=embedding_model,
+        embed_type=embed_type,
+        api_key=api_key,
+        endpoint=endpoint,
+        text_column=text_column,
+        id_column=id_column,
+        label_column=label_column,
+        batch_size=batch_size,
+        top_k_labels=top_k_labels,
+        top_k_questions=top_k_questions,
+    )

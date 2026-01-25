@@ -19,3 +19,4 @@ python-multipart
 pandas
 joblib
 codecarbon
+rank_bm25

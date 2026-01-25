@@ -1,9 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Home, FileText, Brain, TrendingUp } from 'lucide-react';
+import { Home, FileText, Brain, TrendingUp, Search } from 'lucide-react';
 import WorkflowPage from './pages/WorkflowPage';
 import KNNPredictionPage from './pages/KNNPredictionPage';
 import LLMLabelingPage from './pages/LLMLabelingPage';
 import EvaluationPage from './pages/EvaluationPage';
+import SelectQuestionPage from './pages/SelectQuestionPage';
 
 function App() {
   return (
@@ -33,6 +34,9 @@ function App() {
                   <NavLink to="/evaluation" icon={<TrendingUp className="h-5 w-5" />}>
                     Evaluation
                   </NavLink>
+                  <NavLink to="/select-questions" icon={<Search className="h-5 w-5" />}>
+                    Select Questions
+                  </NavLink>
                 </div>
               </div>
             </div>
@@ -46,6 +50,7 @@ function App() {
             <Route path="/knn-prediction" element={<KNNPredictionPage />} />
             <Route path="/llm-labeling" element={<LLMLabelingPage />} />
             <Route path="/evaluation" element={<EvaluationPage />} />
+            <Route path="/select-questions" element={<SelectQuestionPage />} />
           </Routes>
         </main>
       </div>
