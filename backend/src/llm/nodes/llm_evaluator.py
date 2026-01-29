@@ -9,10 +9,17 @@ from langchain_core.prompts import PromptTemplate
 
 from src.llm.models.evaluation import EvaluationResult
 from src.llm.models.labeled_question import QuestionLabels
+from src.llm.models.paper_evaluation import AbsoluteScore, PairwiseJudgment
 from src.llm.prompts.evaluation import label_evaluation_prompt
+from src.llm.prompts.paper_evaluation import (
+    absolute_score_prompt,
+    pairwise_preference_prompt,
+)
 from src.llm.state.evaluation_state_management import EvalState
 
 prompt_template = PromptTemplate(template=label_evaluation_prompt)
+pairwise_prompt_template = PromptTemplate(template=pairwise_preference_prompt)
+absolute_prompt_template = PromptTemplate(template=absolute_score_prompt)
 
 
 def evaluate_one_pair(
@@ -33,6 +40,46 @@ def evaluate_one_pair(
         [system_msg, human_question, human_msg_1, human_msg_2], **invoke_kwargs
     )
     reply.id = q1.id
+    return reply
+
+
+def evaluate_pairwise_preference(
+    question: str,
+    labels_a: list[str],
+    labels_b: list[str],
+    llm: Any,
+    config: Optional[dict] = None,
+) -> PairwiseJudgment:
+    """Run pairwise A/B preference judging for a single question."""
+    structured_llm = llm.with_structured_output(PairwiseJudgment)
+    prompt = pairwise_prompt_template.format_prompt()
+    system_msg = SystemMessage(content=prompt.to_string())
+    human_question = HumanMessage(content=f"<question>{question}</question>")
+    human_a = HumanMessage(content=f"<label_set_a>{', '.join(labels_a)}</label_set_a>")
+    human_b = HumanMessage(content=f"<label_set_b>{', '.join(labels_b)}</label_set_b>")
+    invoke_kwargs = {} if config is None else {"config": config}
+    reply: PairwiseJudgment = structured_llm.invoke(
+        [system_msg, human_question, human_a, human_b], **invoke_kwargs
+    )
+    return reply
+
+
+def evaluate_absolute_scores(
+    question: str,
+    labels: list[str],
+    llm: Any,
+    config: Optional[dict] = None,
+) -> AbsoluteScore:
+    """Run absolute scoring for a single label set."""
+    structured_llm = llm.with_structured_output(AbsoluteScore)
+    prompt = absolute_prompt_template.format_prompt()
+    system_msg = SystemMessage(content=prompt.to_string())
+    human_question = HumanMessage(content=f"<question>{question}</question>")
+    human_labels = HumanMessage(content=f"<label_set>{', '.join(labels)}</label_set>")
+    invoke_kwargs = {} if config is None else {"config": config}
+    reply: AbsoluteScore = structured_llm.invoke(
+        [system_msg, human_question, human_labels], **invoke_kwargs
+    )
     return reply
 
 

@@ -1,13 +1,18 @@
 """
 Service utility functions for orchestrating different operations.
 """
+import json
 import logging
+import random
+import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Set
 
 import numpy as np
 import pandas as pd
+from scipy.stats import binomtest
 
+from app.utils.file_utils import OUTPUT_DIR, save_csv
 from src.embedding.embed import Embedding
 from src.clustering.clustering import possibilistic_clustering, get_possibilistic_clusters_after_elbow
 from src.classification.train_knn import train_knn
@@ -20,7 +25,11 @@ from config.llm_config import LLMConnector
 from enums.embed_type import EmbedType
 from enums.llm_type import LLMType
 from src.llm.models.labeled_question import QuestionLabels
-from src.llm.nodes.llm_evaluator import evaluate_one_pair
+from src.llm.nodes.llm_evaluator import (
+    evaluate_absolute_scores,
+    evaluate_one_pair,
+    evaluate_pairwise_preference,
+)
 from src.select_question.bm25_selector import select_questions_bm25
 from src.select_question.embedding_selector import select_questions_by_embedding
 from src.select_question.label_embedding_selector import select_questions_by_label_embedding
@@ -376,18 +385,21 @@ def evaluate_with_llm_judge(
     # Process results: deduplicate by id (keep first) to avoid duplicate rows from any upstream glitch
     seen_ids: Set[str] = set()
     question_metrics = []
-    metric_totals = {
-        'relevance_method1': 0.0,
-        'correctness_method1': 0.0,
-        'coverage_method1': 0.0,
-        'taxonomy_fit_granularity_method1': 0.0,
-        'actionability_method1': 0.0,
-        'relevance_method2': 0.0,
-        'correctness_method2': 0.0,
-        'coverage_method2': 0.0,
-        'taxonomy_fit_granularity_method2': 0.0,
-        'actionability_method2': 0.0,
-    }
+    metric_fields = [
+        "intent_alignment_score",
+        "concept_completeness_score",
+        "noise_redundancy_penalty",
+        "terminology_normalization_score",
+        "audit_usefulness_score",
+        "control_mapping_clarity_score",
+    ]
+    metric_totals = {}
+    for field in metric_fields:
+        metric_totals[f"{field}_method1"] = 0.0
+        metric_totals[f"{field}_method2"] = 0.0
+
+    def _metric_payload(evaluation):
+        return {field: getattr(evaluation, field) for field in metric_fields}
 
     for result in evaluation_results:
         if result.id in seen_ids:
@@ -399,56 +411,34 @@ def evaluate_with_llm_judge(
             'id': result.id,
             'method1': {
                 'method': eval1.method,
-                'relevance': eval1.relevance,
-                'correctness': eval1.correctness,
-                'coverage': eval1.coverage,
-                'taxonomy_fit_granularity': eval1.taxonomy_fit_granularity,
-                'actionability': eval1.actionability,
+                **_metric_payload(eval1),
                 'reasoning': eval1.reasoning,
                 'labels': eval1.labels_considered or []
             },
             'method2': {
                 'method': eval2.method,
-                'relevance': eval2.relevance,
-                'correctness': eval2.correctness,
-                'coverage': eval2.coverage,
-                'taxonomy_fit_granularity': eval2.taxonomy_fit_granularity,
-                'actionability': eval2.actionability,
+                **_metric_payload(eval2),
                 'reasoning': eval2.reasoning,
                 'labels': eval2.labels_considered or []
             }
         })
-        
+
         # Accumulate totals for averages
-        metric_totals['relevance_method1'] += eval1.relevance
-        metric_totals['correctness_method1'] += eval1.correctness
-        metric_totals['coverage_method1'] += eval1.coverage
-        metric_totals['taxonomy_fit_granularity_method1'] += eval1.taxonomy_fit_granularity
-        metric_totals['actionability_method1'] += eval1.actionability
-        
-        metric_totals['relevance_method2'] += eval2.relevance
-        metric_totals['correctness_method2'] += eval2.correctness
-        metric_totals['coverage_method2'] += eval2.coverage
-        metric_totals['taxonomy_fit_granularity_method2'] += eval2.taxonomy_fit_granularity
-        metric_totals['actionability_method2'] += eval2.actionability
+        for field in metric_fields:
+            metric_totals[f"{field}_method1"] += getattr(eval1, field)
+            metric_totals[f"{field}_method2"] += getattr(eval2, field)
     
     num_questions = len(question_metrics)
     
     # Calculate averages
     averages = {
         'method1': {
-            'relevance': metric_totals['relevance_method1'] / num_questions if num_questions > 0 else 0,
-            'correctness': metric_totals['correctness_method1'] / num_questions if num_questions > 0 else 0,
-            'coverage': metric_totals['coverage_method1'] / num_questions if num_questions > 0 else 0,
-            'taxonomy_fit_granularity': metric_totals['taxonomy_fit_granularity_method1'] / num_questions if num_questions > 0 else 0,
-            'actionability': metric_totals['actionability_method1'] / num_questions if num_questions > 0 else 0,
+            field: metric_totals[f"{field}_method1"] / num_questions if num_questions > 0 else 0
+            for field in metric_fields
         },
         'method2': {
-            'relevance': metric_totals['relevance_method2'] / num_questions if num_questions > 0 else 0,
-            'correctness': metric_totals['correctness_method2'] / num_questions if num_questions > 0 else 0,
-            'coverage': metric_totals['coverage_method2'] / num_questions if num_questions > 0 else 0,
-            'taxonomy_fit_granularity': metric_totals['taxonomy_fit_granularity_method2'] / num_questions if num_questions > 0 else 0,
-            'actionability': metric_totals['actionability_method2'] / num_questions if num_questions > 0 else 0,
+            field: metric_totals[f"{field}_method2"] / num_questions if num_questions > 0 else 0
+            for field in metric_fields
         }
     }
     
@@ -466,6 +456,389 @@ def evaluate_with_llm_judge(
         'average_metrics': averages,
         'question_metrics': question_metrics,
         'ignored_data': ignored_data,
+    }
+    out.update(run_stats)
+    return out
+
+
+def evaluate_with_llm_paper_judge(
+    df1: pd.DataFrame,
+    df2: pd.DataFrame,
+    id_column: str,
+    text_column: str,
+    label_column: str,
+    method1_name: str,
+    method2_name: str,
+    llm_model: str,
+    llm_type: LLMType,
+    api_key: str = None,
+    random_seed: int = 1234,
+    run_pairwise: bool = True,
+    run_absolute: bool = True,
+) -> Dict[str, Any]:
+    """Paper-ready evaluation: pairwise preference, absolute scores, and statistical test."""
+    if not run_pairwise and not run_absolute:
+        raise ValueError("At least one of run_pairwise or run_absolute must be True.")
+    if id_column not in df1.columns or id_column not in df2.columns:
+        raise ValueError(f"ID column '{id_column}' not found in one or both CSV files")
+
+    if label_column not in df1.columns or label_column not in df2.columns:
+        raise ValueError(f"Label column '{label_column}' not found in one or both CSV files")
+
+    text_col = (text_column or "text").strip() or "text"
+    if text_col not in df1.columns:
+        raise ValueError(
+            f"Text column '{text_col}' not found in first CSV. Available: {list(df1.columns)}"
+        )
+    if text_col not in df2.columns:
+        raise ValueError(
+            f"Text column '{text_col}' not found in second CSV. Available: {list(df2.columns)}"
+        )
+    text_column = text_col
+
+    df1_dict = {}
+    for _, row in df1.iterrows():
+        nid = _normalize_id(row[id_column])
+        if nid:
+            df1_dict[nid] = row
+    df2_dict = {}
+    for _, row in df2.iterrows():
+        nid = _normalize_id(row[id_column])
+        if nid:
+            df2_dict[nid] = row
+
+    common_ids = set(df1_dict.keys()) & set(df2_dict.keys())
+    ids_only_in_file1 = set(df1_dict.keys()) - common_ids
+    ids_only_in_file2 = set(df2_dict.keys()) - common_ids
+
+    def _text(r, col):
+        v = r.get(col, None)
+        if pd.isna(v) or v is None:
+            return ""
+        s = str(v).strip()
+        return s if s and s.lower() not in ("nan", "none", "null") else ""
+
+    question_pairs = []
+    skipped_no_labels = 0
+    skipped_no_text = 0
+
+    for item_id in sorted(common_ids):
+        row1 = df1_dict[item_id]
+        row2 = df2_dict[item_id]
+
+        labels1 = _parse_labels(row1[label_column])
+        labels2 = _parse_labels(row2[label_column])
+
+        if not labels1 or not labels2:
+            skipped_no_labels += 1
+            continue
+
+        question_text = _text(row1, text_column) or _text(row2, text_column)
+        if not question_text:
+            skipped_no_text += 1
+            continue
+
+        question_pairs.append({
+            "id": str(item_id),
+            "question": question_text,
+            "labels1": labels1,
+            "labels2": labels2,
+        })
+
+    if not question_pairs:
+        raise ValueError(
+            "No valid questions with labels found in both methods. "
+            f"Common IDs: {len(common_ids)}, skipped (no labels in both): {skipped_no_labels}, "
+            f"skipped (no question text): {skipped_no_text}, valid pairs: {len(question_pairs)}. "
+            "Check id_column, label_column, and text_column; ensure both CSVs use the same IDs "
+            "and have non-empty labels and question text for those rows."
+        )
+
+    from app.utils.execution_stats import run_with_stats
+    from src.llm.utils.token_usage_handler import TokenUsageCallbackHandler
+
+    llm = LLMConnector(
+        model_name=llm_model,
+        llm_type=llm_type,
+        api_key=api_key,
+        temperature=0.0,
+        force_temperature=True,
+    )()
+    token_handler = TokenUsageCallbackHandler()
+    run_config = {"callbacks": [token_handler]}
+
+    rng = random.Random(random_seed)
+    dimensions = ["correctness", "completeness", "clarity", "faithfulness"]
+    scores_by_method = {
+        "method1": {dim: [] for dim in dimensions},
+        "method2": {dim: [] for dim in dimensions},
+    }
+    overall_scores = {"method1": [], "method2": []}
+
+    pairwise_counts = {"method1_wins": 0, "method2_wins": 0, "ties": 0}
+    pairwise_records: list[dict] = []
+    absolute_records: list[dict] = []
+
+    def _run_eval():
+        out = []
+        for pair in question_pairs:
+            question_text = pair["question"]
+            labels1 = pair["labels1"]
+            labels2 = pair["labels2"]
+
+            decision = None
+            if run_pairwise:
+                a_is_method1 = rng.random() < 0.5
+                labels_a = labels1 if a_is_method1 else labels2
+                labels_b = labels2 if a_is_method1 else labels1
+                a_method_key = "method1" if a_is_method1 else "method2"
+                b_method_key = "method2" if a_is_method1 else "method1"
+
+                pairwise = evaluate_pairwise_preference(
+                    question=question_text,
+                    labels_a=labels_a,
+                    labels_b=labels_b,
+                    llm=llm,
+                    config=run_config,
+                )
+
+                decision = pairwise.decision
+                if decision == "A is better":
+                    winner_key = a_method_key
+                elif decision == "B is better":
+                    winner_key = b_method_key
+                else:
+                    winner_key = "tie"
+
+                if winner_key == "method1":
+                    pairwise_counts["method1_wins"] += 1
+                elif winner_key == "method2":
+                    pairwise_counts["method2_wins"] += 1
+                else:
+                    pairwise_counts["ties"] += 1
+
+                pairwise_records.append({
+                    "id": pair["id"],
+                    "question": question_text,
+                    "method1_labels": ", ".join(labels1),
+                    "method2_labels": ", ".join(labels2),
+                    "a_labels": ", ".join(labels_a),
+                    "b_labels": ", ".join(labels_b),
+                    "a_method": method1_name if a_method_key == "method1" else method2_name,
+                    "b_method": method1_name if b_method_key == "method1" else method2_name,
+                    "decision": decision,
+                    "winner_method": (
+                        method1_name if winner_key == "method1"
+                        else method2_name if winner_key == "method2"
+                        else "Tie"
+                    ),
+                    "pairwise_reasoning": pairwise.reasoning or "",
+                })
+
+            if run_absolute:
+                score1 = evaluate_absolute_scores(
+                    question=question_text,
+                    labels=labels1,
+                    llm=llm,
+                    config=run_config,
+                )
+                score2 = evaluate_absolute_scores(
+                    question=question_text,
+                    labels=labels2,
+                    llm=llm,
+                    config=run_config,
+                )
+
+                def _record_score(method_key: str, method_name: str, labels: list[str], score):
+                    dim_values = {dim: getattr(score, dim) for dim in dimensions}
+                    overall = sum(dim_values.values()) / len(dimensions)
+                    for dim, value in dim_values.items():
+                        scores_by_method[method_key][dim].append(value)
+                    overall_scores[method_key].append(overall)
+                    absolute_records.append({
+                        "id": pair["id"],
+                        "question": question_text,
+                        "method": method_name,
+                        "labels": ", ".join(labels),
+                        **dim_values,
+                        "overall": overall,
+                        "reasoning": score.reasoning or "",
+                    })
+
+                _record_score("method1", method1_name, labels1, score1)
+                _record_score("method2", method2_name, labels2, score2)
+
+            out.append({
+                "id": pair["id"],
+                "pairwise_decision": decision,
+            })
+        return out
+
+    _, run_stats = run_with_stats(_run_eval, token_handler=token_handler)
+
+    total_pairs = len(question_pairs)
+    pairwise_summary = None
+    if run_pairwise:
+        win_rate = (pairwise_counts["method1_wins"] / total_pairs) * 100 if total_pairs else 0.0
+        loss_rate = (pairwise_counts["method2_wins"] / total_pairs) * 100 if total_pairs else 0.0
+        tie_rate = (pairwise_counts["ties"] / total_pairs) * 100 if total_pairs else 0.0
+
+        pairwise_summary = {
+            "method1_name": method1_name,
+            "method2_name": method2_name,
+            "wins": pairwise_counts["method1_wins"],
+            "losses": pairwise_counts["method2_wins"],
+            "ties": pairwise_counts["ties"],
+            "win_rate_pct": win_rate,
+            "loss_rate_pct": loss_rate,
+            "tie_rate_pct": tie_rate,
+            "total_pairs": total_pairs,
+        }
+
+    def _mean_std(values: list[float]) -> tuple[float, float]:
+        if not values:
+            return 0.0, 0.0
+        mean = float(np.mean(values))
+        std = float(np.std(values, ddof=1)) if len(values) > 1 else 0.0
+        return mean, std
+
+    average_scores = None
+    dimension_breakdown = None
+    latex_table = None
+    if run_absolute:
+        average_scores = {"method1": {}, "method2": {}}
+        for method_key in ("method1", "method2"):
+            for dim in dimensions:
+                mean, std = _mean_std(scores_by_method[method_key][dim])
+                average_scores[method_key][dim] = {"mean": mean, "std": std}
+            overall_mean, overall_std = _mean_std(overall_scores[method_key])
+            average_scores[method_key]["overall"] = {"mean": overall_mean, "std": overall_std}
+
+        dimension_breakdown = []
+        for dim in dimensions:
+            m1_mean = average_scores["method1"][dim]["mean"]
+            m2_mean = average_scores["method2"][dim]["mean"]
+            dimension_breakdown.append({
+                "dimension": dim,
+                "method1_mean": m1_mean,
+                "method2_mean": m2_mean,
+                "delta": m1_mean - m2_mean,
+            })
+
+        latex_lines = [
+            "\\begin{tabular}{lccc}",
+            "\\toprule",
+            "Dimension & " + method1_name + " & " + method2_name + " & Delta \\\\",
+            "\\midrule",
+        ]
+        for row in dimension_breakdown:
+            latex_lines.append(
+                f"{row['dimension'].title()} & "
+                f"{row['method1_mean']:.2f} & {row['method2_mean']:.2f} & {row['delta']:.2f} \\\\"
+            )
+        latex_lines.extend(["\\bottomrule", "\\end{tabular}"])
+        latex_table = "\n".join(latex_lines)
+
+    statistical_test = None
+    if run_pairwise:
+        wins = pairwise_counts["method1_wins"]
+        losses = pairwise_counts["method2_wins"]
+        n = wins + losses
+        p_value = None
+        significant = False
+        if n > 0:
+            test_result = binomtest(wins, n=n, p=0.5, alternative="greater")
+            p_value = float(test_result.pvalue)
+            significant = p_value < 0.05
+
+        statistical_test = {
+            "test": "binomial_test",
+            "wins": wins,
+            "losses": losses,
+            "ties": pairwise_counts["ties"],
+            "n": n,
+            "p_value": p_value,
+            "alpha": 0.05,
+            "significant": significant,
+            "interpretation": (
+                "method1 win rate is significantly greater than 50%"
+                if significant else "not statistically significant"
+            ),
+        }
+
+    files = {
+        "pairwise_judgments_csv": None,
+        "absolute_scores_csv": None,
+        "pairwise_summary_csv": None,
+        "average_scores_csv": None,
+        "dimension_breakdown_csv": None,
+        "json": None,
+    }
+
+    if run_pairwise:
+        pairwise_df = pd.DataFrame(pairwise_records)
+        pairwise_summary_df = pd.DataFrame([pairwise_summary])
+        files["pairwise_judgments_csv"] = str(save_csv(pairwise_df, "paper_pairwise_judgments.csv"))
+        files["pairwise_summary_csv"] = str(save_csv(pairwise_summary_df, "paper_pairwise_summary.csv"))
+
+    if run_absolute:
+        absolute_df = pd.DataFrame(absolute_records)
+        average_scores_rows = []
+        for method_key, method_name in (("method1", method1_name), ("method2", method2_name)):
+            for dim in dimensions + ["overall"]:
+                average_scores_rows.append({
+                    "method": method_name,
+                    "dimension": dim,
+                    "mean": average_scores[method_key][dim]["mean"],
+                    "std": average_scores[method_key][dim]["std"],
+                })
+        average_scores_df = pd.DataFrame(average_scores_rows)
+        dimension_breakdown_df = pd.DataFrame(dimension_breakdown or [])
+        files["absolute_scores_csv"] = str(save_csv(absolute_df, "paper_absolute_scores.csv"))
+        files["average_scores_csv"] = str(save_csv(average_scores_df, "paper_average_scores.csv"))
+        files["dimension_breakdown_csv"] = str(save_csv(dimension_breakdown_df, "paper_dimension_breakdown.csv"))
+
+    json_path = OUTPUT_DIR / f"{uuid.uuid4()}_paper_evaluation.json"
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump({
+            "pairwise_summary": pairwise_summary,
+            "average_scores": average_scores,
+            "dimension_breakdown": dimension_breakdown,
+            "statistical_test": statistical_test,
+            "latex_table": latex_table,
+            "ignored_data": {
+                "ids_only_in_file1": len(ids_only_in_file1),
+                "ids_only_in_file2": len(ids_only_in_file2),
+                "skipped_no_labels": skipped_no_labels,
+                "skipped_no_text": skipped_no_text,
+            },
+            "pairwise_records": pairwise_records,
+            "absolute_records": absolute_records,
+            "random_seed": random_seed,
+            "run_pairwise": run_pairwise,
+            "run_absolute": run_absolute,
+        }, f, ensure_ascii=True, indent=2)
+    files["json"] = str(json_path)
+
+    out = {
+        "method1_name": method1_name,
+        "method2_name": method2_name,
+        "total_questions_evaluated": total_pairs,
+        "pairwise_summary": pairwise_summary,
+        "average_scores": average_scores,
+        "dimension_breakdown": dimension_breakdown,
+        "latex_table": latex_table,
+        "statistical_test": statistical_test,
+        "ignored_data": {
+            "ids_only_in_file1": len(ids_only_in_file1),
+            "ids_only_in_file2": len(ids_only_in_file2),
+            "skipped_no_labels": skipped_no_labels,
+            "skipped_no_text": skipped_no_text,
+        },
+        "files": files,
+        "random_seed": random_seed,
+        "run_pairwise": run_pairwise,
+        "run_absolute": run_absolute,
     }
     out.update(run_stats)
     return out

@@ -63,7 +63,7 @@ def get_possibilistic_clusters_after_elbow(memberships):
     clusters_res: list[list[int]] = []
     i = 0
     for c, samples in sorted(groups.items()):
-        if len(samples)>1:
+        if len(samples)>1 and len(samples) != len(memberships)+1:
             i+=1
             clusters_res.append(samples)
             print(f"cluster {c} = samples {samples}")

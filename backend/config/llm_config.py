@@ -19,7 +19,8 @@ class LLMConnector:
                 llm_type: LLMType = LLMType.GROQ_AI,
                 api_key: str = None,
                 endpoint:str = None, # for Ollama
-                max_retries: int=20,):
+                max_retries: int=20,
+                force_temperature: bool = False,):
         # Try loading .env from backend directory first
         # In Docker, environment variables are injected via docker-compose env_file
         # This will load .env if it exists locally, but won't fail if it doesn't
@@ -43,8 +44,14 @@ class LLMConnector:
             self.api_key = api_key
         else:
             self.api_key = os.getenv("API_KEY")
-        if os.getenv("LLM_TEMPERATURE") is not None:
-            self.temperature = os.getenv("LLM_TEMPERATURE")
+        env_temperature = os.getenv("LLM_TEMPERATURE")
+        if force_temperature:
+            self.temperature = temperature
+        elif env_temperature is not None:
+            try:
+                self.temperature = float(env_temperature)
+            except ValueError:
+                self.temperature = temperature
         else:
             self.temperature = temperature
 

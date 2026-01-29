@@ -8,20 +8,42 @@ class LabelEvaluation(BaseModel):
 
     id: str = Field(description="The id of the evaluated question.")
     method: str = Field(description="The method used to generate the labels.")
-    relevance: float = Field(ge=1, le=5, description="Relevance score (1-5).")
-    correctness: float = Field(ge=1, le=5, description="Correctness score (1-5).")
-    coverage: float = Field(ge=1, le=5, description="Coverage (key concepts) score (1-5).")
-    taxonomy_fit_granularity: float = Field(
-        ge=1,
+    intent_alignment_score: float = Field(
+        ge=0,
         le=5,
-        description="Taxonomy fit & granularity score (1-5).",
+        description="Intent Alignment Score (IAS) (0-5).",
     )
-    actionability: float = Field(ge=1, le=5, description="Actionability score (1-5).")
+    concept_completeness_score: float = Field(
+        ge=0,
+        le=5,
+        description="Concept Completeness Score (CCS) (0-5).",
+    )
+    noise_redundancy_penalty: float = Field(
+        ge=0,
+        le=5,
+        description="Noise & Redundancy Penalty (NRP) (0-5).",
+    )
+    terminology_normalization_score: float = Field(
+        ge=0,
+        le=5,
+        description="Terminology Normalization Score (TNS) (0-5).",
+    )
+    audit_usefulness_score: float = Field(
+        ge=0,
+        le=5,
+        description="Audit Usefulness Score (AUS) (0-5).",
+    )
+    control_mapping_clarity_score: float = Field(
+        ge=0,
+        le=5,
+        description="Control-Mapping Clarity Score (CMCS) (0-5).",
+    )
     reasoning: str = Field(description="Short justification for the scores.")
     labels_considered: Optional[List[str]] = Field(
         default=None,
         description="Labels that were evaluated (copied back for traceability).",
     )
+
 
 class EvaluationResult(BaseModel):
     """Evaluation result for a question with multiple labeling methods."""

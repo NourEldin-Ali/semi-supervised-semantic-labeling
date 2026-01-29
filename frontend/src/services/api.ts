@@ -83,43 +83,112 @@ export interface EvaluationResponse {
     emissions_kg_co2eq?: number;
     average_metrics: {
       method1: {
-        relevance: number;
-        correctness: number;
-        coverage: number;
-        taxonomy_fit_granularity: number;
-        actionability: number;
+        intent_alignment_score: number;
+        concept_completeness_score: number;
+        noise_redundancy_penalty: number;
+        terminology_normalization_score: number;
+        audit_usefulness_score: number;
+        control_mapping_clarity_score: number;
       };
       method2: {
-        relevance: number;
-        correctness: number;
-        coverage: number;
-        taxonomy_fit_granularity: number;
-        actionability: number;
+        intent_alignment_score: number;
+        concept_completeness_score: number;
+        noise_redundancy_penalty: number;
+        terminology_normalization_score: number;
+        audit_usefulness_score: number;
+        control_mapping_clarity_score: number;
       };
     };
     question_metrics: Array<{
       id: string;
       method1: {
         method: string;
-        relevance: number;
-        correctness: number;
-        coverage: number;
-        taxonomy_fit_granularity: number;
-        actionability: number;
+        intent_alignment_score: number;
+        concept_completeness_score: number;
+        noise_redundancy_penalty: number;
+        terminology_normalization_score: number;
+        audit_usefulness_score: number;
+        control_mapping_clarity_score: number;
         reasoning: string;
         labels: string[];
       };
       method2: {
         method: string;
-        relevance: number;
-        correctness: number;
-        coverage: number;
-        taxonomy_fit_granularity: number;
-        actionability: number;
+        intent_alignment_score: number;
+        concept_completeness_score: number;
+        noise_redundancy_penalty: number;
+        terminology_normalization_score: number;
+        audit_usefulness_score: number;
+        control_mapping_clarity_score: number;
         reasoning: string;
         labels: string[];
       };
     }>;
+  };
+}
+
+export interface PaperEvaluationResponse {
+  message: string;
+  file1: string;
+  file2: string;
+  evaluation_results: {
+    method1_name: string;
+    method2_name: string;
+    total_questions_evaluated: number;
+    pairwise_summary?: {
+      method1_name: string;
+      method2_name: string;
+      wins: number;
+      losses: number;
+      ties: number;
+      win_rate_pct: number;
+      loss_rate_pct: number;
+      tie_rate_pct: number;
+      total_pairs: number;
+    };
+    average_scores?: {
+      method1: Record<string, { mean: number; std: number }>;
+      method2: Record<string, { mean: number; std: number }>;
+    };
+    dimension_breakdown?: Array<{
+      dimension: string;
+      method1_mean: number;
+      method2_mean: number;
+      delta: number;
+    }>;
+    latex_table?: string;
+    statistical_test?: {
+      test: string;
+      wins: number;
+      losses: number;
+      ties: number;
+      n: number;
+      p_value: number | null;
+      alpha: number;
+      significant: boolean;
+      interpretation: string;
+    };
+    ignored_data: {
+      ids_only_in_file1: number;
+      ids_only_in_file2: number;
+      skipped_no_labels: number;
+      skipped_no_text: number;
+    };
+    files?: {
+      pairwise_judgments_csv?: string | null;
+      absolute_scores_csv?: string | null;
+      pairwise_summary_csv?: string | null;
+      average_scores_csv?: string | null;
+      dimension_breakdown_csv?: string | null;
+      json?: string | null;
+    };
+    random_seed: number;
+    run_pairwise?: boolean;
+    run_absolute?: boolean;
+    execution_time_seconds?: number;
+    tokens_consumed?: number;
+    energy_consumed_kwh?: number;
+    emissions_kg_co2eq?: number;
   };
 }
 
@@ -184,6 +253,10 @@ export const evaluationApi = {
     const response = await api.post<EvaluationResponse>('/evaluation/compare', formData);
     return response.data;
   },
+  paper: async (formData: FormData): Promise<PaperEvaluationResponse> => {
+    const response = await api.post<PaperEvaluationResponse>('/evaluation/paper', formData);
+    return response.data;
+  },
 };
 
 // Workflow API
@@ -235,13 +308,15 @@ export const downloadFile = async (filePath: string, filename?: string) => {
   
   // Determine endpoint based on file extension and path
   let endpoint = '';
-  if (filePath.endsWith('.npy')) {
+  if (filePath.includes('outputs')) {
+    endpoint = `/labeling/download/${encodedPath}`;
+  } else if (filePath.endsWith('.npy')) {
     endpoint = `/embeddings/download/${encodedPath}`;
   } else if (filePath.endsWith('.joblib')) {
     endpoint = `/classification/download/${encodedPath}`;
   } else if (filePath.includes('clustered') || filePath.includes('clustering')) {
     endpoint = `/clustering/download/${encodedPath}`;
-  } else if (filePath.includes('labeled') || filePath.includes('labeling') || filePath.includes('outputs')) {
+  } else if (filePath.includes('labeled') || filePath.includes('labeling')) {
     endpoint = `/labeling/download/${encodedPath}`;
   } else if (filePath.endsWith('.csv')) {
     // For CSV files, try to determine the correct endpoint based on path
