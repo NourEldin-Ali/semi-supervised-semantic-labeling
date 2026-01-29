@@ -57,10 +57,11 @@ def generate_embeddings_from_csv(
 def generate_clusters(
     embeddings: np.ndarray,
     k: int = 3,
-    metric: str = 'cosine'
+    metric: str = 'cosine',
+    m: float = 1.0,
 ) -> List[List[int]]:
     """Generate clustering groups from embeddings."""
-    memberships = possibilistic_clustering(embeddings, metric=metric, k=k)
+    memberships = possibilistic_clustering(embeddings, metric=metric, k=k, m=m)
     clusters = get_possibilistic_clusters_after_elbow(memberships)
     return clusters
 
@@ -78,7 +79,11 @@ def generate_group_labels(
     """Generate labels for each cluster group using LLM."""
     group_questions = []
     for cluster_id, indices in enumerate(clusters):
+        if not indices:
+            continue
         questions = [str(df.iloc[idx][text_column]) for idx in indices if idx < len(df)]
+        if not questions:
+            continue
         group_questions.append(GroupQuestion(id=str(cluster_id), questions=questions))
 
     orchestrator = GroupOrchestrator(
