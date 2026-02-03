@@ -63,25 +63,39 @@ export default function EvaluationPage() {
     if (!result?.question_metrics) return;
     const m1 = result.method1_name ?? 'Method 1';
     const m2 = result.method2_name ?? 'Method 2';
+    type PairwiseJudgeItem = {
+      id: string;
+      winner: 'method1' | 'method2' | 'tie';
+      reasoning: string;
+    };
+    const pairwise: PairwiseJudgeItem[] = result.pairwise_judge?.per_question ?? [];
+    const pairwiseById = new Map<string, PairwiseJudgeItem>(
+      pairwise.map((p) => [String(p.id), p])
+    );
     const headers = [
       'Question ID',
-      `${m1} Relevance`, `${m1} Correctness`, `${m1} Coverage (Key Concepts)`,
-      `${m1} Taxonomy Fit & Granularity`, `${m1} Actionability (Audit Mapping)`,
+      `${m1} Correctness`, `${m1} Completeness`, `${m1} Generalization`, `${m1} Consistency`,
       `${m1} Reasoning`, `${m1} Labels`,
-      `${m2} Relevance`, `${m2} Correctness`, `${m2} Coverage (Key Concepts)`,
-      `${m2} Taxonomy Fit & Granularity`, `${m2} Actionability (Audit Mapping)`,
+      `${m2} Correctness`, `${m2} Completeness`, `${m2} Generalization`, `${m2} Consistency`,
       `${m2} Reasoning`, `${m2} Labels`,
+      'LLM Winner', 'LLM Winner Reasoning',
     ];
     const rows: string[] = [headers.map(escapeCsv).join(',')];
     for (const q of result.question_metrics) {
       const r1 = q.method1;
       const r2 = q.method2;
+      const pw = pairwiseById.get(String(q.id));
+      let winnerLabel = '';
+      if (pw?.winner === 'method1') winnerLabel = m1;
+      else if (pw?.winner === 'method2') winnerLabel = m2;
+      else if (pw?.winner === 'tie') winnerLabel = 'Tie';
       rows.push([
         escapeCsv(q.id),
-        r1.relevance, r1.correctness, r1.coverage, r1.taxonomy_fit_granularity, r1.actionability,
+        r1.correctness, r1.completeness, r1.generalization, r1.consistency,
         escapeCsv(r1.reasoning ?? ''), escapeCsv((r1.labels ?? []).join(', ')),
-        r2.relevance, r2.correctness, r2.coverage, r2.taxonomy_fit_granularity, r2.actionability,
+        r2.correctness, r2.completeness, r2.generalization, r2.consistency,
         escapeCsv(r2.reasoning ?? ''), escapeCsv((r2.labels ?? []).join(', ')),
+        escapeCsv(winnerLabel), escapeCsv(pw?.reasoning ?? ''),
       ].join(','));
     }
     const avg = result.average_metrics;
@@ -89,13 +103,12 @@ export default function EvaluationPage() {
       rows.push('');
       rows.push([
         'AVERAGE',
-        avg.method1.relevance.toFixed(2), avg.method1.correctness.toFixed(2),
-        avg.method1.coverage.toFixed(2), avg.method1.taxonomy_fit_granularity.toFixed(2),
-        avg.method1.actionability.toFixed(2),
+        avg.method1.correctness.toFixed(2), avg.method1.completeness.toFixed(2),
+        avg.method1.generalization.toFixed(2), avg.method1.consistency.toFixed(2),
         '', '',
-        avg.method2.relevance.toFixed(2), avg.method2.correctness.toFixed(2),
-        avg.method2.coverage.toFixed(2), avg.method2.taxonomy_fit_granularity.toFixed(2),
-        avg.method2.actionability.toFixed(2),
+        avg.method2.correctness.toFixed(2), avg.method2.completeness.toFixed(2),
+        avg.method2.generalization.toFixed(2), avg.method2.consistency.toFixed(2),
+        '', '',
         '', '',
       ].join(','));
     }
@@ -238,6 +251,30 @@ export default function EvaluationPage() {
                   </p>
                 )}
             </div>
+            {result.pairwise_comparison && (
+              <div className="p-4 bg-emerald-50 rounded-lg space-y-1">
+                <p className="text-sm text-emerald-800">
+                  Pairwise comparison (avg of 4 metrics):{' '}
+                  <strong>{result.method1_name}</strong> wins{' '}
+                  <strong>{result.pairwise_comparison.method1_wins}</strong>,{' '}
+                  <strong>{result.method2_name}</strong> wins{' '}
+                  <strong>{result.pairwise_comparison.method2_wins}</strong>,{' '}
+                  ties <strong>{result.pairwise_comparison.ties}</strong>.
+                </p>
+              </div>
+            )}
+            {result.pairwise_judge && (
+              <div className="p-4 bg-purple-50 rounded-lg space-y-1">
+                <p className="text-sm text-purple-800">
+                  Pairwise LLM judge:{' '}
+                  <strong>{result.pairwise_judge.method1_name}</strong> wins{' '}
+                  <strong>{result.pairwise_judge.method1_wins}</strong>,{' '}
+                  <strong>{result.pairwise_judge.method2_name}</strong> wins{' '}
+                  <strong>{result.pairwise_judge.method2_wins}</strong>,{' '}
+                  ties <strong>{result.pairwise_judge.ties}</strong>.
+                </p>
+              </div>
+            )}
 
             <div className="flex flex-wrap items-center gap-4">
               <div className="flex-1 min-w-0">
@@ -260,11 +297,10 @@ export default function EvaluationPage() {
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <h4 className="font-semibold mb-3">{result.method1_name}</h4>
                   <div className="space-y-2">
-                    <MetricRow label="Relevance" value={result.average_metrics.method1.relevance} max={5} />
                     <MetricRow label="Correctness" value={result.average_metrics.method1.correctness} max={5} />
-                    <MetricRow label="Coverage (Key Concepts)" value={result.average_metrics.method1.coverage} max={5} />
-                    <MetricRow label="Taxonomy Fit & Granularity" value={result.average_metrics.method1.taxonomy_fit_granularity} max={5} />
-                    <MetricRow label="Actionability (Audit Mapping)" value={result.average_metrics.method1.actionability} max={5} />
+                    <MetricRow label="Completeness" value={result.average_metrics.method1.completeness} max={5} />
+                    <MetricRow label="Generalization" value={result.average_metrics.method1.generalization} max={5} />
+                    <MetricRow label="Consistency" value={result.average_metrics.method1.consistency} max={5} />
                   </div>
                 </div>
 
@@ -272,11 +308,10 @@ export default function EvaluationPage() {
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <h4 className="font-semibold mb-3">{result.method2_name}</h4>
                   <div className="space-y-2">
-                    <MetricRow label="Relevance" value={result.average_metrics.method2.relevance} max={5} />
                     <MetricRow label="Correctness" value={result.average_metrics.method2.correctness} max={5} />
-                    <MetricRow label="Coverage (Key Concepts)" value={result.average_metrics.method2.coverage} max={5} />
-                    <MetricRow label="Taxonomy Fit & Granularity" value={result.average_metrics.method2.taxonomy_fit_granularity} max={5} />
-                    <MetricRow label="Actionability (Audit Mapping)" value={result.average_metrics.method2.actionability} max={5} />
+                    <MetricRow label="Completeness" value={result.average_metrics.method2.completeness} max={5} />
+                    <MetricRow label="Generalization" value={result.average_metrics.method2.generalization} max={5} />
+                    <MetricRow label="Consistency" value={result.average_metrics.method2.consistency} max={5} />
                   </div>
                 </div>
               </div>
@@ -309,12 +344,11 @@ export default function EvaluationPage() {
                             <div className="text-xs text-gray-500">
                               Labels: {item.method1.labels.join(', ') || 'None'}
                             </div>
-                            <div className="grid grid-cols-3 gap-2 text-xs">
-                              <div>Rel: {item.method1.relevance}/5</div>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
                               <div>Cor: {item.method1.correctness}/5</div>
-                              <div>Cov: {item.method1.coverage}/5</div>
-                              <div>Tax: {item.method1.taxonomy_fit_granularity}/5</div>
-                              <div>Act: {item.method1.actionability}/5</div>
+                              <div>Comp: {item.method1.completeness}/5</div>
+                              <div>Gen: {item.method1.generalization}/5</div>
+                              <div>Cons: {item.method1.consistency}/5</div>
                             </div>
                             <div className="text-xs text-gray-600 italic mt-1">
                               {item.method1.reasoning}
@@ -326,12 +360,11 @@ export default function EvaluationPage() {
                             <div className="text-xs text-gray-500">
                               Labels: {item.method2.labels.join(', ') || 'None'}
                             </div>
-                            <div className="grid grid-cols-3 gap-2 text-xs">
-                              <div>Rel: {item.method2.relevance}/5</div>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
                               <div>Cor: {item.method2.correctness}/5</div>
-                              <div>Cov: {item.method2.coverage}/5</div>
-                              <div>Tax: {item.method2.taxonomy_fit_granularity}/5</div>
-                              <div>Act: {item.method2.actionability}/5</div>
+                              <div>Comp: {item.method2.completeness}/5</div>
+                              <div>Gen: {item.method2.generalization}/5</div>
+                              <div>Cons: {item.method2.consistency}/5</div>
                             </div>
                             <div className="text-xs text-gray-600 italic mt-1">
                               {item.method2.reasoning}

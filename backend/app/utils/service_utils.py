@@ -20,7 +20,13 @@ from config.llm_config import LLMConnector
 from enums.embed_type import EmbedType
 from enums.llm_type import LLMType
 from src.llm.models.labeled_question import QuestionLabels
-from src.llm.nodes.llm_evaluator import evaluate_one_pair
+from src.llm.nodes.llm_evaluator import evaluate_one_pair, evaluate_pairwise_winner
+from src.llm.nodes.question_judge import (
+    score_question,
+    compare_questions,
+    score_question_set,
+    compare_question_sets,
+)
 from src.select_question.bm25_selector import select_questions_bm25
 from src.select_question.embedding_selector import select_questions_by_embedding
 from src.select_question.label_embedding_selector import select_questions_by_label_embedding
@@ -371,28 +377,42 @@ def evaluate_with_llm_judge(
 
     def _run_eval():
         out_list: List[Any] = []
+        pairwise_list: List[Any] = []
         for q1, q2 in zip(questions_method_1, questions_method_2):
             r = evaluate_one_pair(q1, q2, llm, config=run_config)
             out_list.append(r)
-        return out_list
+            pairwise_list.append(evaluate_pairwise_winner(q1, q2, llm, config=run_config))
+        return {"evaluations": out_list, "pairwise": pairwise_list}
 
-    evaluation_results, run_stats = run_with_stats(_run_eval, token_handler=token_handler)
+    run_output, run_stats = run_with_stats(_run_eval, token_handler=token_handler)
+    evaluation_results = run_output.get("evaluations") or []
+    pairwise_results = run_output.get("pairwise") or []
 
     # Process results: deduplicate by id (keep first) to avoid duplicate rows from any upstream glitch
     seen_ids: Set[str] = set()
     question_metrics = []
+    pairwise_by_id = {}
+    for item in pairwise_results:
+        if item.id not in pairwise_by_id:
+            pairwise_by_id[item.id] = item
+
+    pairwise_llm_counts = {"method1_wins": 0, "method2_wins": 0, "ties": 0}
+    pairwise_llm_details = []
+    pairwise_details = []
+    pairwise_counts = {"method1_wins": 0, "method2_wins": 0, "ties": 0}
     metric_totals = {
-        'relevance_method1': 0.0,
         'correctness_method1': 0.0,
-        'coverage_method1': 0.0,
-        'taxonomy_fit_granularity_method1': 0.0,
-        'actionability_method1': 0.0,
-        'relevance_method2': 0.0,
+        'completeness_method1': 0.0,
+        'generalization_method1': 0.0,
+        'consistency_method1': 0.0,
         'correctness_method2': 0.0,
-        'coverage_method2': 0.0,
-        'taxonomy_fit_granularity_method2': 0.0,
-        'actionability_method2': 0.0,
+        'completeness_method2': 0.0,
+        'generalization_method2': 0.0,
+        'consistency_method2': 0.0,
     }
+
+    def _overall_score(ev) -> float:
+        return (ev.correctness + ev.completeness + ev.generalization + ev.consistency) / 4.0
 
     for result in evaluation_results:
         if result.id in seen_ids:
@@ -400,60 +420,88 @@ def evaluate_with_llm_judge(
         seen_ids.add(result.id)
         eval1, eval2 = result.evaluations
 
+        score1 = _overall_score(eval1)
+        score2 = _overall_score(eval2)
+        if score1 > score2:
+            outcome = "method1"
+            pairwise_counts["method1_wins"] += 1
+        elif score2 > score1:
+            outcome = "method2"
+            pairwise_counts["method2_wins"] += 1
+        else:
+            outcome = "tie"
+            pairwise_counts["ties"] += 1
+
+        pairwise_details.append({
+            "id": result.id,
+            "method1_score": score1,
+            "method2_score": score2,
+            "outcome": outcome,
+        })
+
+        pairwise_item = pairwise_by_id.get(result.id)
+        if pairwise_item:
+            winner = pairwise_item.winner
+            if winner == "method1":
+                pairwise_llm_counts["method1_wins"] += 1
+            elif winner == "method2":
+                pairwise_llm_counts["method2_wins"] += 1
+            else:
+                pairwise_llm_counts["ties"] += 1
+            pairwise_llm_details.append({
+                "id": result.id,
+                "winner": winner,
+                "reasoning": pairwise_item.reasoning,
+            })
+
         question_metrics.append({
             'id': result.id,
             'method1': {
                 'method': eval1.method,
-                'relevance': eval1.relevance,
                 'correctness': eval1.correctness,
-                'coverage': eval1.coverage,
-                'taxonomy_fit_granularity': eval1.taxonomy_fit_granularity,
-                'actionability': eval1.actionability,
+                'completeness': eval1.completeness,
+                'generalization': eval1.generalization,
+                'consistency': eval1.consistency,
                 'reasoning': eval1.reasoning,
                 'labels': eval1.labels_considered or []
             },
             'method2': {
                 'method': eval2.method,
-                'relevance': eval2.relevance,
                 'correctness': eval2.correctness,
-                'coverage': eval2.coverage,
-                'taxonomy_fit_granularity': eval2.taxonomy_fit_granularity,
-                'actionability': eval2.actionability,
+                'completeness': eval2.completeness,
+                'generalization': eval2.generalization,
+                'consistency': eval2.consistency,
                 'reasoning': eval2.reasoning,
                 'labels': eval2.labels_considered or []
             }
         })
         
         # Accumulate totals for averages
-        metric_totals['relevance_method1'] += eval1.relevance
         metric_totals['correctness_method1'] += eval1.correctness
-        metric_totals['coverage_method1'] += eval1.coverage
-        metric_totals['taxonomy_fit_granularity_method1'] += eval1.taxonomy_fit_granularity
-        metric_totals['actionability_method1'] += eval1.actionability
+        metric_totals['completeness_method1'] += eval1.completeness
+        metric_totals['generalization_method1'] += eval1.generalization
+        metric_totals['consistency_method1'] += eval1.consistency
         
-        metric_totals['relevance_method2'] += eval2.relevance
         metric_totals['correctness_method2'] += eval2.correctness
-        metric_totals['coverage_method2'] += eval2.coverage
-        metric_totals['taxonomy_fit_granularity_method2'] += eval2.taxonomy_fit_granularity
-        metric_totals['actionability_method2'] += eval2.actionability
+        metric_totals['completeness_method2'] += eval2.completeness
+        metric_totals['generalization_method2'] += eval2.generalization
+        metric_totals['consistency_method2'] += eval2.consistency
     
     num_questions = len(question_metrics)
     
     # Calculate averages
     averages = {
         'method1': {
-            'relevance': metric_totals['relevance_method1'] / num_questions if num_questions > 0 else 0,
             'correctness': metric_totals['correctness_method1'] / num_questions if num_questions > 0 else 0,
-            'coverage': metric_totals['coverage_method1'] / num_questions if num_questions > 0 else 0,
-            'taxonomy_fit_granularity': metric_totals['taxonomy_fit_granularity_method1'] / num_questions if num_questions > 0 else 0,
-            'actionability': metric_totals['actionability_method1'] / num_questions if num_questions > 0 else 0,
+            'completeness': metric_totals['completeness_method1'] / num_questions if num_questions > 0 else 0,
+            'generalization': metric_totals['generalization_method1'] / num_questions if num_questions > 0 else 0,
+            'consistency': metric_totals['consistency_method1'] / num_questions if num_questions > 0 else 0,
         },
         'method2': {
-            'relevance': metric_totals['relevance_method2'] / num_questions if num_questions > 0 else 0,
             'correctness': metric_totals['correctness_method2'] / num_questions if num_questions > 0 else 0,
-            'coverage': metric_totals['coverage_method2'] / num_questions if num_questions > 0 else 0,
-            'taxonomy_fit_granularity': metric_totals['taxonomy_fit_granularity_method2'] / num_questions if num_questions > 0 else 0,
-            'actionability': metric_totals['actionability_method2'] / num_questions if num_questions > 0 else 0,
+            'completeness': metric_totals['completeness_method2'] / num_questions if num_questions > 0 else 0,
+            'generalization': metric_totals['generalization_method2'] / num_questions if num_questions > 0 else 0,
+            'consistency': metric_totals['consistency_method2'] / num_questions if num_questions > 0 else 0,
         }
     }
     
@@ -470,6 +518,21 @@ def evaluate_with_llm_judge(
         'method2_name': method2_name,
         'average_metrics': averages,
         'question_metrics': question_metrics,
+        'pairwise_comparison': {
+            'score_method': 'average_of_correctness_completeness_generalization_consistency',
+            'method1_wins': pairwise_counts["method1_wins"],
+            'method2_wins': pairwise_counts["method2_wins"],
+            'ties': pairwise_counts["ties"],
+            'per_question': pairwise_details,
+        },
+        'pairwise_judge': {
+            'method1_name': method1_name,
+            'method2_name': method2_name,
+            'method1_wins': pairwise_llm_counts["method1_wins"],
+            'method2_wins': pairwise_llm_counts["method2_wins"],
+            'ties': pairwise_llm_counts["ties"],
+            'per_question': pairwise_llm_details,
+        },
         'ignored_data': ignored_data,
     }
     out.update(run_stats)
@@ -648,3 +711,150 @@ def select_questions_label_embedding_service(
         top_k_labels=top_k_labels,
         top_k_questions=top_k_questions,
     )
+
+
+def score_question_with_llm(
+    user_need: str,
+    question: str,
+    llm_model: str,
+    llm_type: LLMType,
+    api_key: str = None,
+) -> Dict[str, Any]:
+    """Score a single question against a user need using LLM."""
+    from app.utils.execution_stats import run_with_stats
+    from src.llm.utils.token_usage_handler import TokenUsageCallbackHandler
+
+    llm = LLMConnector(
+        model_name=llm_model,
+        llm_type=llm_type,
+        api_key=api_key,
+    )()
+    token_handler = TokenUsageCallbackHandler()
+    run_config = {"callbacks": [token_handler]}
+
+    def _run_eval():
+        return score_question(user_need=user_need, question=question, llm=llm, config=run_config)
+
+    result, run_stats = run_with_stats(_run_eval, token_handler=token_handler)
+    out = {
+        "score": result.score,
+        "reasoning": result.reasoning,
+    }
+    out.update(run_stats)
+    return out
+
+
+def compare_questions_with_llm(
+    user_need: str,
+    question_a: str,
+    question_b: str,
+    llm_model: str,
+    llm_type: LLMType,
+    api_key: str = None,
+) -> Dict[str, Any]:
+    """Compare two questions for a user need using LLM."""
+    from app.utils.execution_stats import run_with_stats
+    from src.llm.utils.token_usage_handler import TokenUsageCallbackHandler
+
+    llm = LLMConnector(
+        model_name=llm_model,
+        llm_type=llm_type,
+        api_key=api_key,
+    )()
+    token_handler = TokenUsageCallbackHandler()
+    run_config = {"callbacks": [token_handler]}
+
+    def _run_eval():
+        return compare_questions(
+            user_need=user_need,
+            question_a=question_a,
+            question_b=question_b,
+            llm=llm,
+            config=run_config,
+        )
+
+    result, run_stats = run_with_stats(_run_eval, token_handler=token_handler)
+    out = {
+        "score_a": result.score_a,
+        "score_b": result.score_b,
+        "winner": result.winner,
+        "reasoning": result.reasoning,
+    }
+    out.update(run_stats)
+    return out
+
+
+def score_question_set_with_llm(
+    user_need: str,
+    questions: List[str],
+    llm_model: str,
+    llm_type: LLMType,
+    api_key: str = None,
+) -> Dict[str, Any]:
+    """Score a set of questions against a user need using LLM."""
+    from app.utils.execution_stats import run_with_stats
+    from src.llm.utils.token_usage_handler import TokenUsageCallbackHandler
+
+    llm = LLMConnector(
+        model_name=llm_model,
+        llm_type=llm_type,
+        api_key=api_key,
+    )()
+    token_handler = TokenUsageCallbackHandler()
+    run_config = {"callbacks": [token_handler]}
+
+    def _run_eval():
+        return score_question_set(
+            user_need=user_need, questions=questions, llm=llm, config=run_config
+        )
+
+    result, run_stats = run_with_stats(_run_eval, token_handler=token_handler)
+    out = {
+        "score": result.score,
+        "reasoning": result.reasoning,
+        "question_count": len(questions),
+    }
+    out.update(run_stats)
+    return out
+
+
+def compare_question_sets_with_llm(
+    user_need: str,
+    questions_a: List[str],
+    questions_b: List[str],
+    llm_model: str,
+    llm_type: LLMType,
+    api_key: str = None,
+) -> Dict[str, Any]:
+    """Compare two question sets for a user need using LLM."""
+    from app.utils.execution_stats import run_with_stats
+    from src.llm.utils.token_usage_handler import TokenUsageCallbackHandler
+
+    llm = LLMConnector(
+        model_name=llm_model,
+        llm_type=llm_type,
+        api_key=api_key,
+    )()
+    token_handler = TokenUsageCallbackHandler()
+    run_config = {"callbacks": [token_handler]}
+
+    def _run_eval():
+        return compare_question_sets(
+            user_need=user_need,
+            questions_a=questions_a,
+            questions_b=questions_b,
+            llm=llm,
+            config=run_config,
+        )
+
+    result, run_stats = run_with_stats(_run_eval, token_handler=token_handler)
+    out = {
+        "score_a": result.score_a,
+        "score_b": result.score_b,
+        "winner": result.winner,
+        "reasoning": result.reasoning,
+        "count_a": len(questions_a),
+        "count_b": len(questions_b),
+    }
+    out.update(run_stats)
+    return out

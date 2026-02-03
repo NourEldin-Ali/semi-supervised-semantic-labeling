@@ -31,13 +31,14 @@ async def compare_two_csv_files(
     Endpoint 7: Accept two CSV files and generate an evaluation comparison using LLM as judge.
     
     Returns detailed evaluation metrics for each question including:
-    - Relevance scores (1-5)
     - Correctness scores (1-5)
-    - Coverage (key concepts) scores (1-5)
-    - Taxonomy fit & granularity scores (1-5)
-    - Actionability (audit mapping) scores (1-5)
+    - Completeness scores (1-5)
+    - Generalization scores (1-5)
+    - Consistency scores (1-5)
     - Reasoning for each evaluation
     - Average metrics across all questions
+    - Pairwise comparison counts (method1 wins, method2 wins, ties)
+    - Pairwise LLM-judge winners (method1/method2/tie) per question
     
     Questions without labels in either method are automatically ignored.
     """

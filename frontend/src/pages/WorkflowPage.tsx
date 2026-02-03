@@ -195,9 +195,9 @@ export default function WorkflowPage() {
         <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => setActiveTab('step-by-step')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+            className={`py-3 px-4 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'step-by-step'
-                ? 'border-blue-500 text-blue-600'
+                ? 'border-blue-600 text-blue-700 bg-blue-50 rounded-t-md shadow-sm'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
@@ -205,9 +205,9 @@ export default function WorkflowPage() {
           </button>
           <button
             onClick={() => setActiveTab('automated')}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+            className={`py-3 px-4 border-b-2 font-medium text-sm transition-colors ${
               activeTab === 'automated'
-                ? 'border-blue-500 text-blue-600'
+                ? 'border-blue-600 text-blue-700 bg-blue-50 rounded-t-md shadow-sm'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >

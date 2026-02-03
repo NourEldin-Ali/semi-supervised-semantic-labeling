@@ -12,7 +12,9 @@ class LLMType(Enum):
         normalized = name.strip().lower()
         mapping = {
             "open_ai": cls.OPEN_AI,
+            "openai": cls.OPEN_AI,
             "groq": cls.GROQ_AI,
+            "groq_ai": cls.GROQ_AI,
             "ollama": cls.OLLAMA,
             "anthropic":cls.ANTHROPIC
         }

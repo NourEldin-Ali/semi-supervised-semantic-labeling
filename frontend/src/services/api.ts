@@ -83,43 +83,63 @@ export interface EvaluationResponse {
     emissions_kg_co2eq?: number;
     average_metrics: {
       method1: {
-        relevance: number;
         correctness: number;
-        coverage: number;
-        taxonomy_fit_granularity: number;
-        actionability: number;
+        completeness: number;
+        generalization: number;
+        consistency: number;
       };
       method2: {
-        relevance: number;
         correctness: number;
-        coverage: number;
-        taxonomy_fit_granularity: number;
-        actionability: number;
+        completeness: number;
+        generalization: number;
+        consistency: number;
       };
     };
     question_metrics: Array<{
       id: string;
       method1: {
         method: string;
-        relevance: number;
         correctness: number;
-        coverage: number;
-        taxonomy_fit_granularity: number;
-        actionability: number;
+        completeness: number;
+        generalization: number;
+        consistency: number;
         reasoning: string;
         labels: string[];
       };
       method2: {
         method: string;
-        relevance: number;
         correctness: number;
-        coverage: number;
-        taxonomy_fit_granularity: number;
-        actionability: number;
+        completeness: number;
+        generalization: number;
+        consistency: number;
         reasoning: string;
         labels: string[];
       };
     }>;
+    pairwise_comparison?: {
+      score_method: string;
+      method1_wins: number;
+      method2_wins: number;
+      ties: number;
+      per_question: Array<{
+        id: string;
+        method1_score: number;
+        method2_score: number;
+        outcome: 'method1' | 'method2' | 'tie';
+      }>;
+    };
+    pairwise_judge?: {
+      method1_name: string;
+      method2_name: string;
+      method1_wins: number;
+      method2_wins: number;
+      ties: number;
+      per_question: Array<{
+        id: string;
+        winner: 'method1' | 'method2' | 'tie';
+        reasoning: string;
+      }>;
+    };
   };
 }
 
@@ -136,6 +156,52 @@ export interface SelectQuestionResponse extends RunStats {
   method: 'bm25' | 'embedding' | 'label_embedding';
   results: SelectQuestionResult[];
   total_results: number;
+}
+
+export interface QuestionScoreResponse extends RunStats {
+  message: string;
+  user_need: string;
+  question: string;
+  score: number;
+  reasoning: string;
+}
+
+export interface QuestionCompareResponse extends RunStats {
+  message: string;
+  user_need: string;
+  question_a: string;
+  question_b: string;
+  score_a: number;
+  score_b: number;
+  winner: 'A' | 'B' | 'tie';
+  reasoning: string;
+}
+
+export interface QuestionSetScoreResponse extends RunStats {
+  message: string;
+  file?: string;
+  text_column?: string;
+  user_need: string;
+  questions: string[];
+  score: number;
+  reasoning: string;
+  question_count: number;
+}
+
+export interface QuestionSetCompareResponse extends RunStats {
+  message: string;
+  file_a?: string;
+  file_b?: string;
+  text_column?: string;
+  user_need: string;
+  questions_a: string[];
+  questions_b: string[];
+  score_a: number;
+  score_b: number;
+  winner: 'A' | 'B' | 'tie';
+  reasoning: string;
+  count_a: number;
+  count_b: number;
 }
 
 // Embeddings API
@@ -220,6 +286,30 @@ export const selectQuestionApi = {
   },
   labelEmbedding: async (formData: FormData): Promise<SelectQuestionResponse> => {
     const response = await api.post<SelectQuestionResponse>('/select-question/label-embedding', formData);
+    return response.data;
+  },
+  score: async (formData: FormData): Promise<QuestionScoreResponse> => {
+    const response = await api.post<QuestionScoreResponse>('/select-question/score', formData);
+    return response.data;
+  },
+  compare: async (formData: FormData): Promise<QuestionCompareResponse> => {
+    const response = await api.post<QuestionCompareResponse>('/select-question/compare', formData);
+    return response.data;
+  },
+  scoreSet: async (formData: FormData): Promise<QuestionSetScoreResponse> => {
+    const response = await api.post<QuestionSetScoreResponse>('/select-question/score-set', formData);
+    return response.data;
+  },
+  compareSets: async (formData: FormData): Promise<QuestionSetCompareResponse> => {
+    const response = await api.post<QuestionSetCompareResponse>('/select-question/compare-sets', formData);
+    return response.data;
+  },
+  scoreSetFile: async (formData: FormData): Promise<QuestionSetScoreResponse> => {
+    const response = await api.post<QuestionSetScoreResponse>('/select-question/score-set-file', formData);
+    return response.data;
+  },
+  compareSetsFile: async (formData: FormData): Promise<QuestionSetCompareResponse> => {
+    const response = await api.post<QuestionSetCompareResponse>('/select-question/compare-sets-file', formData);
     return response.data;
   },
 };
