@@ -1,0 +1,201 @@
+id,text,title,labels
+doc_001,Have you identified internal issues that affect your ISMS?,Clause 4 – Context,ISMS
+doc_002,Have you identified external issues that affect your ISMS?,Clause 4 – Context,ISMS
+doc_003,Are relevant interested parties documented?,Clause 4 – Context,policy review
+doc_004,Are the information security requirements of interested parties documented?,Clause 4 – Context,documentation
+doc_005,Is the ISMS scope clearly defined?,Clause 4 – Context,ISMS
+doc_006,"Does the scope include all relevant assets, systems, and processes?",Clause 4 – Context,asset management
+doc_007,Is the scope reviewed periodically?,Clause 4 – Context,periodic review
+doc_008,Are exclusions from the ISMS scope justified?,Clause 4 – Context,ISMS
+doc_009,Are dependencies with external parties documented?,Clause 4 – Context,documentation
+doc_010,Are interfaces between different internal processes defined?,Clause 4 – Context,network segmentation
+doc_011,Is top management committed to the ISMS?,Clause 5 – Leadership,information security policy
+doc_012,Is there a documented information security policy?,Clause 5 – Leadership,documentation
+doc_013,Has the information security policy been communicated to all employees?,Clause 5 – Leadership,policy review
+doc_014,Are roles and responsibilities for information security assigned?,Clause 5 – Leadership,business continuity
+doc_015,Is there a governance committee for information security?,Clause 5 – Leadership,information security policy
+doc_016,Does management participate in risk assessment reviews?,Clause 5 – Leadership,supplier risk assessment
+doc_017,Are ISMS objectives aligned to business goals?,Clause 5 – Leadership,ISMS
+doc_018,Are ISMS objectives measurable and monitored?,Clause 5 – Leadership,ISMS
+doc_019,Are responsibilities for incident reporting defined?,Clause 5 – Leadership,incident reporting
+doc_020,Does leadership allocate adequate resources for the ISMS?,Clause 5 – Leadership,ISMS
+doc_021,Has the organization identified ISMS-related risks?,Clause 6 – Planning,ISMS
+doc_022,Is there a risk assessment methodology?,Clause 6 – Planning,application security
+doc_023,Is the risk assessment methodology documented?,Clause 6 – Planning,documentation
+doc_024,Are risk owners assigned?,Clause 6 – Planning,asset ownership
+doc_025,Are risk acceptance criteria defined?,Clause 6 – Planning,security evaluation
+doc_026,Are threats and vulnerabilities documented?,Clause 6 – Planning,systems security
+doc_027,Are risk treatments documented?,Clause 6 – Planning,documentation
+doc_028,Is a risk register maintained?,Clause 6 – Planning,supplier risk assessment
+doc_029,Is the Statement of Applicability (SoA) up to date?,Clause 6 – Planning,periodic review
+doc_030,Are excluded Annex A controls justified in the SoA?,Clause 6 – Planning,encryption
+doc_031,Are ISMS objectives regularly monitored?,Clause 6 – Planning,ISMS
+doc_032,Are plans established to achieve ISMS objectives?,Clause 6 – Planning,ISMS
+doc_033,Are changes affecting the ISMS planned and evaluated?,Clause 6 – Planning,ISMS
+doc_034,Are risk acceptance decisions documented?,Clause 6 – Planning,documentation
+doc_035,Are resources required for the ISMS available?,Clause 7 – Support,ISMS
+doc_036,Are personnel competent for their security roles?,Clause 7 – Support,security awareness training
+doc_037,Are competence requirements defined for each ISMS role?,Clause 7 – Support,ISMS
+doc_038,Are training records maintained?,Clause 7 – Support,record retention
+doc_039,Are employees aware of security policies?,Clause 7 – Support,security awareness training
+doc_040,Do employees understand their security responsibilities?,Clause 7 – Support,security awareness training
+doc_041,Is annual security awareness training conducted?,Clause 7 – Support,security awareness
+doc_042,Is security communication defined and documented?,Clause 7 – Support,documentation
+doc_043,Are communication channels for security matters defined?,Clause 7 – Support,data exchange
+doc_044,Are ISMS documents controlled with versioning?,Clause 7 – Support,ISMS
+doc_045,Are outdated ISMS documents removed from use?,Clause 7 – Support,ISMS
+doc_046,Is access to ISMS documentation restricted?,Clause 7 – Support,ISMS
+doc_047,Are operational controls implemented per the SoA?,Clause 8 – Operation,procedures
+doc_048,Are risk treatments executed as planned?,Clause 8 – Operation,corrective actions
+doc_049,Are processes monitored for deviations?,Clause 8 – Operation,development monitoring
+doc_050,Are operational changes reviewed and approved?,Clause 8 – Operation,business continuity
+doc_051,Are outsourced processes monitored?,Clause 8 – Operation,development monitoring
+doc_052,Are third-party security risks evaluated?,Clause 8 – Operation,third-party risk
+doc_053,Are operational logs maintained?,Clause 8 – Operation,log monitoring
+doc_054,Are procedures updated after incidents?,Clause 8 – Operation,classification procedures
+doc_055,Are operational tasks assigned to competent staff?,Clause 8 – Operation,responsibility assignment
+doc_056,Are internal audits conducted as scheduled?,Clause 9 – Performance,ISMS
+doc_057,Are audit records maintained?,Clause 9 – Performance,record retention
+doc_058,Are audit findings tracked until closure?,Clause 9 – Performance,corrective actions
+doc_059,Is ISMS effectiveness measured?,Clause 9 – Performance,ISMS
+doc_060,Are ISMS metrics documented?,Clause 9 – Performance,ISMS
+doc_061,Are metrics reviewed by management?,Clause 9 – Performance,supplier risk assessment
+doc_062,Does management perform scheduled ISMS reviews?,Clause 9 – Performance,ISMS
+doc_063,Are management review inputs documented?,Clause 9 – Performance,ISMS
+doc_064,Are management review outputs documented?,Clause 9 – Performance,ISMS
+doc_065,Are incident trends analyzed over time?,Clause 9 – Performance,log monitoring
+doc_066,Are nonconformities identified and recorded?,Clause 10 – Improvement,corrective actions
+doc_067,Are corrective actions assigned with deadlines?,Clause 10 – Improvement,corrective actions
+doc_068,Are root cause analyses performed?,Clause 10 – Improvement,corrective actions
+doc_069,Are improvement opportunities documented?,Clause 10 – Improvement,procedures
+doc_070,Is continual improvement demonstrated?,Clause 10 – Improvement,documentation
+doc_071,Are information security policies documented and maintained?,A.5 – Information Security Policies,documentation
+doc_072,Are information security policies approved by management?,A.5 – Information Security Policies,information security policy
+doc_073,Are information security policies communicated to all staff?,A.5 – Information Security Policies,policy review
+doc_074,Are policies reviewed at planned intervals?,A.5 – Information Security Policies,periodic review
+doc_075,Is compliance with security policies verified?,A.5 – Information Security Policies,documentation
+doc_076,Is an information security governance structure defined?,A.6 – Organization of Information Security,information security policy
+doc_077,Are security responsibilities assigned to specific roles?,A.6 – Organization of Information Security,business continuity
+doc_078,Is segregation of duties implemented?,A.6 – Organization of Information Security,segregation of duties
+doc_079,Are contacts with authorities maintained for incident reporting?,A.6 – Organization of Information Security,external contacts
+doc_080,Are contacts with special interest groups maintained?,A.6 – Organization of Information Security,external contacts
+doc_081,Is threat intelligence obtained and used?,A.6 – Organization of Information Security,security monitoring
+doc_082,Are information security requirements considered in project management?,A.6 – Organization of Information Security,information security policy
+doc_083,Are mobile devices managed under a formal policy?,A.6 – Organization of Information Security,security controls
+doc_084,Is remote working governed by appropriate controls?,A.6 – Organization of Information Security,physical security controls
+doc_085,Are background checks performed for new hires?,A.7 – Human Resource Security,background checks
+doc_086,Do employees sign confidentiality agreements?,A.7 – Human Resource Security,supplier contracts
+doc_087,Are employees given security training during onboarding?,A.7 – Human Resource Security,security awareness training
+doc_088,Are employee security responsibilities defined in job descriptions?,A.7 – Human Resource Security,security awareness training
+doc_089,Is there a disciplinary process for security violations?,A.7 – Human Resource Security,anomaly detection
+doc_090,Are access rights revoked immediately upon termination?,A.7 – Human Resource Security,periodic review
+doc_091,Are exit procedures documented for departing staff?,A.7 – Human Resource Security,offboarding
+doc_092,Is an inventory of information assets maintained?,A.8 – Asset Management,information security policy
+doc_093,Are ownership responsibilities assigned for each asset?,A.8 – Asset Management,asset ownership
+doc_094,Are information assets classified according to sensitivity?,A.8 – Asset Management,asset management
+doc_095,Are asset handling procedures documented?,A.8 – Asset Management,asset ownership
+doc_096,Is acceptable use of assets defined?,A.8 – Asset Management,asset ownership
+doc_097,Are removable media controlled and monitored?,A.8 – Asset Management,removable media
+doc_098,Is data securely erased when assets are disposed of?,A.8 – Asset Management,media handling
+doc_099,Is there a documented access control policy?,A.9 – Access Control,documentation
+doc_100,Are user access requests formally approved?,A.9 – Access Control,periodic review
+doc_101,Are privileged accounts strictly controlled?,A.9 – Access Control,access control
+doc_102,Is MFA enabled for all critical systems?,A.9 – Access Control,resilience
+doc_103,Are user access rights reviewed periodically?,A.9 – Access Control,periodic review
+doc_104,Are dormant accounts removed in a timely manner?,A.9 – Access Control,security controls
+doc_105,Is a formal password policy enforced?,A.9 – Access Control,password policy
+doc_106,Are temporary accounts monitored and removed when no longer needed?,A.9 – Access Control,security controls
+doc_107,Is access revoked immediately after employee termination?,A.9 – Access Control,periodic review
+doc_108,Is third-party access managed and monitored?,A.9 – Access Control,anomaly detection
+doc_109,Is a cryptographic policy defined and documented?,A.10 – Cryptography,documentation
+doc_110,Are encryption standards aligned with best practices?,A.10 – Cryptography,encryption
+doc_111,Are cryptographic keys securely stored?,A.10 – Cryptography,encryption keys
+doc_112,Are key rotations performed based on policy?,A.10 – Cryptography,key rotation
+doc_113,Are encryption mechanisms approved before use?,A.10 – Cryptography,encryption
+doc_114,Is sensitive data encrypted in transit?,A.10 – Cryptography,data exchange
+doc_115,Is sensitive data encrypted at rest?,A.10 – Cryptography,encryption
+doc_116,Are secure physical areas identified?,A.11 – Physical & Environmental Security,physical security controls
+doc_117,Is physical access to secure areas restricted?,A.11 – Physical & Environmental Security,Physical security
+doc_118,Are entry logs maintained for physical access?,A.11 – Physical & Environmental Security,physical security
+doc_119,Are visitor access procedures enforced?,A.11 – Physical & Environmental Security,physical security
+doc_120,Is equipment protected from theft or damage?,A.11 – Physical & Environmental Security,security controls
+doc_121,"Are environmental controls (cooling, humidity) in place for server rooms?",A.11 – Physical & Environmental Security,physical security controls
+doc_122,Are power backups such as UPS or generators installed?,A.11 – Physical & Environmental Security,availability
+doc_123,Are devices securely wiped before disposal?,A.11 – Physical & Environmental Security,media handling
+doc_124,Are standard operating procedures documented?,A.12 – Operations Security,documentation
+doc_125,Are changes reviewed and tested before deployment?,A.12 – Operations Security,activity monitoring
+doc_126,Is malware protection implemented and updated?,A.12 – Operations Security,security controls
+doc_127,Are system logs collected and stored?,A.12 – Operations Security,log monitoring
+doc_128,Are logs reviewed on a regular basis?,A.12 – Operations Security,log monitoring
+doc_129,Is time synchronization configured on all systems?,A.12 – Operations Security,security controls
+doc_130,Are capacity and performance levels monitored?,A.12 – Operations Security,log monitoring
+doc_131,Are backups performed according to schedule?,A.12 – Operations Security,backup protection
+doc_132,Are test restorations performed to validate backup integrity?,A.12 – Operations Security,backup protection
+doc_133,Are vulnerabilities identified and remediated promptly?,A.12 – Operations Security,systems security
+doc_134,Are security patches tested before deployment?,A.12 – Operations Security,activity monitoring
+doc_135,Are secure configuration baselines maintained?,A.12 – Operations Security,documentation
+doc_136,Are network security controls implemented and documented?,A.13 – Communications Security,information security policy
+doc_137,Are networks segmented based on sensitivity?,A.13 – Communications Security,network segmentation
+doc_138,Is secure communication enforced through encrypted protocols?,A.13 – Communications Security,data exchange
+doc_139,Are firewall rules reviewed periodically?,A.13 – Communications Security,periodic review
+doc_140,Is data transmitted securely across public networks?,A.13 – Communications Security,data exchange
+doc_141,Is network traffic monitored for anomalies?,A.13 – Communications Security,network traffic monitoring
+doc_142,Are agreements in place for external network connections?,A.13 – Communications Security,documentation
+doc_143,Are security requirements defined for new systems?,"A.14 – System Acquisition, Development & Maintenance",requirements definition
+doc_144,Are secure coding practices established and used?,"A.14 – System Acquisition, Development & Maintenance",documentation
+doc_145,Are code reviews performed for new development?,"A.14 – System Acquisition, Development & Maintenance",activity monitoring
+doc_146,"Are development, test, and production environments separated?","A.14 – System Acquisition, Development & Maintenance",test environments
+doc_147,Are system changes tested for security impact?,"A.14 – System Acquisition, Development & Maintenance",activity monitoring
+doc_148,Is security testing performed on new releases?,"A.14 – System Acquisition, Development & Maintenance",penetration testing
+doc_149,Are APIs secured and documented?,"A.14 – System Acquisition, Development & Maintenance",API security
+doc_150,Are vulnerabilities tracked throughout the SDLC?,"A.14 – System Acquisition, Development & Maintenance",systems security
+doc_151,Are suppliers evaluated for security before onboarding?,A.15 – Supplier Relationships,supplier risk assessment
+doc_152,Are supplier SLAs documented and monitored?,A.15 – Supplier Relationships,supplier monitoring
+doc_153,Are supplier security risks assessed periodically?,A.15 – Supplier Relationships,supplier risk assessment
+doc_154,Do supplier contracts include security requirements?,A.15 – Supplier Relationships,security requirements
+doc_155,Are supplier services monitored for compliance?,A.15 – Supplier Relationships,supplier monitoring
+doc_156,Is third-party access controlled and reviewed?,A.15 – Supplier Relationships,periodic review
+doc_157,Are supplier performance and compliance reviewed?,A.15 – Supplier Relationships,supplier risk assessment
+doc_158,Is an incident response plan documented?,A.16 – Incident Management,incident response
+doc_159,Are incident response roles and responsibilities defined?,A.16 – Incident Management,incident response
+doc_160,Are incidents logged and tracked?,A.16 – Incident Management,log monitoring
+doc_161,Are incidents categorized by severity?,A.16 – Incident Management,log monitoring
+doc_162,Is root cause analysis performed for major incidents?,A.16 – Incident Management,log monitoring
+doc_163,Is forensic evidence preserved when needed?,A.16 – Incident Management,record retention
+doc_164,Are lessons learned documented after incidents?,A.16 – Incident Management,documentation
+doc_165,Are regulatory incident reporting requirements followed?,A.16 – Incident Management,incident reporting
+doc_166,Are business continuity plans documented and maintained?,A.17 – Business Continuity Management,business continuity
+doc_167,Have recovery time objectives (RTO) been defined?,A.17 – Business Continuity Management,automation
+doc_168,Are critical business processes identified?,A.17 – Business Continuity Management,business continuity
+doc_169,Are continuity plans tested on a regular basis?,A.17 – Business Continuity Management,business continuity
+doc_170,Are alternate work sites available if needed?,A.17 – Business Continuity Management,resilience
+doc_171,Are employees trained on continuity procedures?,A.17 – Business Continuity Management,security awareness training
+doc_172,Are applicable legal and regulatory requirements identified?,A.18 – Compliance,documentation
+doc_173,Is compliance with legal and contractual requirements monitored?,A.18 – Compliance,documentation
+doc_174,Are intellectual property rights protected?,A.18 – Compliance,asset management
+doc_175,Is data retention defined and enforced?,A.18 – Compliance,record retention
+doc_176,Is personal data processed in compliance with regulations?,A.18 – Compliance,security controls
+doc_177,Are audit logs protected against tampering?,A.18 – Compliance,log monitoring
+doc_178,Are records maintained for required retention periods?,A.18 – Compliance,record retention
+doc_179,Is a formal security architecture documented?,Extended – Deep-Dive Controls,documentation
+doc_180,Are security exceptions documented and approved?,Extended – Deep-Dive Controls,documentation
+doc_181,Are regular penetration tests conducted?,Extended – Deep-Dive Controls,penetration testing
+doc_182,Is shadow IT monitored and controlled?,Extended – Deep-Dive Controls,documentation
+doc_183,Are cloud configurations reviewed against benchmarks?,Extended – Deep-Dive Controls,security evaluation
+doc_184,Is a multi-cloud governance model defined?,Extended – Deep-Dive Controls,security evaluation
+doc_185,Are container workloads secured and monitored?,Extended – Deep-Dive Controls,documentation
+doc_186,Are APIs inventoried and monitored for abuse?,Extended – Deep-Dive Controls,monitoring
+doc_187,Are IoT devices controlled and risk assessed?,Extended – Deep-Dive Controls,application security
+doc_188,Are SaaS applications governed by policy?,Extended – Deep-Dive Controls,application security
+doc_189,Are data flows documented and maintained?,Extended – Deep-Dive Controls,documentation
+doc_190,Is data minimization practiced across all processes?,Extended – Deep-Dive Controls,asset management
+doc_191,Are phishing simulations conducted to test awareness?,Extended – Deep-Dive Controls,phishing training
+doc_192,Are insider threat indicators monitored?,Extended – Deep-Dive Controls,security controls
+doc_193,Is Data Loss Prevention (DLP) implemented?,Extended – Deep-Dive Controls,encryption
+doc_194,Are employees permitted to use personal devices under BYOD controls?,Extended – Deep-Dive Controls,security controls
+doc_195,Are email filtering and anti-spam mechanisms implemented?,Extended – Deep-Dive Controls,security controls
+doc_196,Are SIEM alerts triaged according to documented severity levels?,Extended – Deep-Dive Controls,incident response
+doc_197,Is the organization's risk appetite defined?,Extended – Deep-Dive Controls,information security policy
+doc_198,Are KPIs and KRIs used to measure security performance?,Extended – Deep-Dive Controls,ISMS
+doc_199,Is the ISMS architecture reviewed annually?,Extended – Deep-Dive Controls,ISMS
+doc_200,Are all improvements tracked to closure in a documented process?,Extended – Deep-Dive Controls,corrective actions

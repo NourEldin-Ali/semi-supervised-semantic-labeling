@@ -4,7 +4,7 @@ import FileUpload from '../components/FileUpload';
 import Input from '../components/Input';
 import Select from '../components/Select';
 import RunStatistics from '../components/RunStatistics';
-import { QuestionSetCompareResponse, selectQuestionApi } from '../services/api';
+import { QuestionSetCompareResponse, QuestionSetScoreResponse, selectQuestionApi } from '../services/api';
 
 export default function QuestionJudgePage() {
   const [llmModel, setLlmModel] = useState('gpt-5.2-2025-12-11');
@@ -18,6 +18,39 @@ export default function QuestionJudgePage() {
   const [setCompareBusy, setSetCompareBusy] = useState(false);
   const [setCompareErrorMsg, setSetCompareErrorMsg] = useState<string | null>(null);
   const [setCompareData, setSetCompareData] = useState<QuestionSetCompareResponse | null>(null);
+
+  const [setFileNeedText, setSetFileNeedText] = useState('');
+  const [setFileCsv, setSetFileCsv] = useState<File | null>(null);
+  const [setFileTextColumn, setSetFileTextColumn] = useState('question');
+  const [setFileScoreBusy, setSetFileScoreBusy] = useState(false);
+  const [setFileScoreErrorMsg, setSetFileScoreErrorMsg] = useState<string | null>(null);
+  const [setFileScoreData, setSetFileScoreData] = useState<QuestionSetScoreResponse | null>(null);
+
+  const handleSetScoreFile = async () => {
+    if (!setFileNeedText.trim() || !setFileCsv) {
+      setSetFileScoreErrorMsg('Please provide the user need and upload a CSV file.');
+      return;
+    }
+    setSetFileScoreBusy(true);
+    setSetFileScoreErrorMsg(null);
+    setSetFileScoreData(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('user_need', setFileNeedText.trim());
+      formData.append('file', setFileCsv);
+      formData.append('text_column', setFileTextColumn.trim() || 'question');
+      formData.append('llm_model', llmModel);
+      formData.append('llm_type', llmType);
+      if (apiKey.trim()) formData.append('api_key', apiKey.trim());
+      const response = await selectQuestionApi.scoreSetFile(formData);
+      setSetFileScoreData(response);
+    } catch (err: any) {
+      setSetFileScoreErrorMsg(err.message || 'Failed to score question set (file)');
+    } finally {
+      setSetFileScoreBusy(false);
+    }
+  };
 
   const handleSetCompare = async () => {
     if (!setCompareNeedText.trim() || !setCompareFileA || !setCompareFileB) {
@@ -187,6 +220,59 @@ export default function QuestionJudgePage() {
           </div>
         )}
       </div> */}
+
+      <div className="bg-white rounded-lg shadow p-6 space-y-6">
+        <h2 className="text-xl font-semibold text-gray-900">Score a Set of Questions (CSV)</h2>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">User Need</label>
+          <textarea
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            rows={4}
+            value={setFileNeedText}
+            onChange={(e) => setSetFileNeedText(e.target.value)}
+            placeholder="Describe the user requirement..."
+            disabled={setFileScoreBusy}
+          />
+        </div>
+        <FileUpload
+          accept=".csv"
+          file={setFileCsv}
+          onChange={setSetFileCsv}
+          label="Upload CSV (generated questions)"
+          disabled={setFileScoreBusy}
+        />
+        <Input
+          label="Question Column"
+          value={setFileTextColumn}
+          onChange={(e) => setSetFileTextColumn(e.target.value)}
+          placeholder="question"
+          disabled={setFileScoreBusy}
+        />
+        {setFileScoreErrorMsg && (
+          <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+            {setFileScoreErrorMsg}
+          </div>
+        )}
+        <Button onClick={handleSetScoreFile} loading={setFileScoreBusy} disabled={setFileScoreBusy}>
+          Score Question Set (File)
+        </Button>
+
+        {setFileScoreData && (
+          <div className="mt-4 space-y-4">
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <p className="text-sm text-blue-700">Set Score</p>
+              <div className="text-4xl font-bold text-blue-900">
+                {setFileScoreData.score}/100
+              </div>
+              <p className="mt-2 text-sm text-blue-800">{setFileScoreData.reasoning}</p>
+              <p className="mt-2 text-sm text-blue-800">
+                Questions scored: {setFileScoreData.question_count}
+              </p>
+            </div>
+            <RunStatistics stats={setFileScoreData} />
+          </div>
+        )}
+      </div>
 
       {/* <div className="bg-white rounded-lg shadow p-6 space-y-6">
         <h2 className="text-xl font-semibold text-gray-900">Compare Two Questions</h2>

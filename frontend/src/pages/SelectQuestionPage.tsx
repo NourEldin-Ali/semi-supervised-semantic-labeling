@@ -6,7 +6,7 @@ import Select from '../components/Select';
 import RunStatistics from '../components/RunStatistics';
 import { selectQuestionApi, SelectQuestionResponse } from '../services/api';
 
-type Method = 'bm25' | 'embedding' | 'label_embedding';
+type Method = 'bm25' | 'embedding' | 'label_embedding' | 'label_embedding_agg';
 type SortKey = 'original' | 'score' | 'id' | 'question' | 'labels' | 'matched_labels';
 type SortDir = 'asc' | 'desc';
 
@@ -227,6 +227,22 @@ export default function SelectQuestionPage() {
         setSortKey('original');
         setSortDir('desc');
       }
+
+      if (method === 'label_embedding_agg') {
+        formData.append('label_column', labelColumn.trim() || 'labels');
+        formData.append('embedding_model', embeddingModel);
+        formData.append('embed_type', embedType);
+        formData.append('batch_size', batchSize.toString());
+        formData.append('top_k_questions', topKQuestions.toString());
+        if (apiKey.trim()) formData.append('api_key', apiKey.trim());
+        if (endpoint.trim()) formData.append('endpoint', endpoint.trim());
+        const response = await selectQuestionApi.labelEmbeddingAggregate(formData);
+        setResult(response);
+        setRowIds(response.results.map((row, idx) => createRowId(row.id, idx)));
+        setSelectedRows(new Set());
+        setSortKey('original');
+        setSortDir('desc');
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to select questions');
     } finally {
@@ -253,15 +269,16 @@ export default function SelectQuestionPage() {
               { value: 'bm25', label: 'BM25 (Lexical)' },
               { value: 'embedding', label: 'Embedding Similarity' },
               { value: 'label_embedding', label: 'Label Embedding + Match' },
+              { value: 'label_embedding_agg', label: 'Label Embedding (Aggregate)' },
             ]}
           />
           <Input
             label="Top K (Questions)"
             type="number"
-            value={method === 'label_embedding' ? topKQuestions : topK}
+            value={method === 'label_embedding' || method === 'label_embedding_agg' ? topKQuestions : topK}
             onChange={(e) => {
               const val = parseInt(e.target.value) || 1;
-              if (method === 'label_embedding') {
+              if (method === 'label_embedding' || method === 'label_embedding_agg') {
                 setTopKQuestions(val);
               } else {
                 setTopK(val);
@@ -304,10 +321,16 @@ export default function SelectQuestionPage() {
             disabled={loading}
           />
           <Input
-            label={method === 'label_embedding' ? 'Label Column (required)' : 'Label Column (optional)'}
+            label={
+              method === 'label_embedding' || method === 'label_embedding_agg'
+                ? 'Label Column (required)'
+                : 'Label Column (optional)'
+            }
             value={labelColumn}
             onChange={(e) => setLabelColumn(e.target.value)}
-            placeholder={method === 'label_embedding' ? 'labels' : 'optional'}
+            placeholder={
+              method === 'label_embedding' || method === 'label_embedding_agg' ? 'labels' : 'optional'
+            }
             disabled={loading}
           />
         </div>
@@ -371,6 +394,12 @@ export default function SelectQuestionPage() {
             <div className="text-sm text-gray-500 flex items-end">
               Uses top labels to filter matching questions.
             </div>
+          </div>
+        )}
+
+        {method === 'label_embedding_agg' && (
+          <div className="text-sm text-gray-500">
+            Scores each question by averaging similarity across all of its labels.
           </div>
         )}
 
@@ -454,7 +483,7 @@ export default function SelectQuestionPage() {
                   <th className="px-4 py-2 text-left font-medium text-gray-600">Score</th>
                   <th className="px-4 py-2 text-left font-medium text-gray-600">Question</th>
                   <th className="px-4 py-2 text-left font-medium text-gray-600">Labels</th>
-                  {result.method === 'label_embedding' && (
+                  {(result.method === 'label_embedding' || result.method === 'label_embedding_agg') && (
                     <th className="px-4 py-2 text-left font-medium text-gray-600">Matched Labels</th>
                   )}
                 </tr>
@@ -479,7 +508,7 @@ export default function SelectQuestionPage() {
                     <td className="px-4 py-2 text-gray-700">
                       {item.row.labels && item.row.labels.length ? item.row.labels.join(', ') : '-'}
                     </td>
-                    {result.method === 'label_embedding' && (
+                    {(result.method === 'label_embedding' || result.method === 'label_embedding_agg') && (
                       <td className="px-4 py-2 text-gray-700">
                         {item.row.matched_labels && item.row.matched_labels.length ? item.row.matched_labels.join(', ') : '-'}
                       </td>

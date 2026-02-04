@@ -8,6 +8,7 @@ from app.utils.service_utils import (
     select_questions_bm25_service,
     select_questions_embedding_service,
     select_questions_label_embedding_service,
+    select_questions_label_embedding_aggregate_service,
     score_question_with_llm,
     compare_questions_with_llm,
     score_question_set_with_llm,
@@ -165,6 +166,61 @@ async def select_questions_label_embedding_endpoint(
         return {
             "message": "Label-embedding selection completed successfully",
             "method": "label_embedding",
+            "results": results,
+            "total_results": len(results),
+            **stats,
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error selecting questions: {str(e)}")
+
+
+@router.post("/select-question/label-embedding-aggregate")
+async def select_questions_label_embedding_aggregate_endpoint(
+    file: UploadFile = File(..., description="CSV file containing questions and labels"),
+    user_need: str = Form(..., description="User requirement / need text"),
+    embedding_model: str = Form(..., description="Embedding model name"),
+    embed_type: str = Form(default="open_ai", description="Embedding type: open_ai, ollama, or huggingface"),
+    text_column: str = Form(default="text", description="Name of the question column"),
+    id_column: str = Form(default="id", description="Name of the ID column"),
+    label_column: str = Form(default="labels", description="Name of the labels column"),
+    batch_size: int = Form(default=32, description="Batch size for embedding generation"),
+    top_k_questions: int = Form(default=5, description="Number of top questions to return"),
+    api_key: str = Form(default=None, description="Optional API key for embedding service"),
+    endpoint: str = Form(default=None, description="Optional embedding endpoint (e.g., Ollama base URL)"),
+):
+    """
+    Select top questions by aggregating label-embedding similarity per question.
+    """
+    try:
+        file_content = await file.read()
+        csv_path = save_uploaded_file(file_content, file.filename)
+        df = read_csv(csv_path)
+
+        actual_text_col = (text_column or "text").strip() or "text"
+        actual_id_col = (id_column or "id").strip() or "id"
+        actual_label_col = (label_column or "labels").strip() or "labels"
+
+        def _run():
+            return select_questions_label_embedding_aggregate_service(
+                df=df,
+                user_need=user_need,
+                embedding_model=embedding_model,
+                embed_type=embed_type,
+                api_key=api_key,
+                endpoint=endpoint,
+                text_column=actual_text_col,
+                id_column=actual_id_col,
+                label_column=actual_label_col,
+                batch_size=batch_size,
+                top_k_questions=top_k_questions,
+            )
+
+        results, stats = run_with_stats(_run)
+        return {
+            "message": "Label-embedding aggregate selection completed successfully",
+            "method": "label_embedding_agg",
             "results": results,
             "total_results": len(results),
             **stats,

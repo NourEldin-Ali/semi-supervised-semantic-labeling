@@ -29,7 +29,10 @@ from src.llm.nodes.question_judge import (
 )
 from src.select_question.bm25_selector import select_questions_bm25
 from src.select_question.embedding_selector import select_questions_by_embedding
-from src.select_question.label_embedding_selector import select_questions_by_label_embedding
+from src.select_question.label_embedding_selector import (
+    select_questions_by_label_embedding,
+    select_questions_by_label_embedding_aggregate,
+)
 
 
 def generate_embeddings_from_csv(
@@ -709,6 +712,35 @@ def select_questions_label_embedding_service(
         label_column=label_column,
         batch_size=batch_size,
         top_k_labels=top_k_labels,
+        top_k_questions=top_k_questions,
+    )
+
+
+def select_questions_label_embedding_aggregate_service(
+    df: pd.DataFrame,
+    user_need: str,
+    embedding_model: str,
+    embed_type: EmbedType | str,
+    api_key: str | None = None,
+    endpoint: str | None = None,
+    text_column: str = "text",
+    id_column: str = "id",
+    label_column: str = "labels",
+    batch_size: int = 32,
+    top_k_questions: int = 5,
+) -> List[Dict[str, Any]]:
+    """Select top questions using aggregated label embeddings."""
+    return select_questions_by_label_embedding_aggregate(
+        user_need=user_need,
+        csv_input=df,
+        embedding_model=embedding_model,
+        embed_type=embed_type,
+        api_key=api_key,
+        endpoint=endpoint,
+        text_column=text_column,
+        id_column=id_column,
+        label_column=label_column,
+        batch_size=batch_size,
         top_k_questions=top_k_questions,
     )
 

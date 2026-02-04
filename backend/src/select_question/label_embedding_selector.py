@@ -133,3 +133,99 @@ def select_questions_by_label_embedding(
     candidates.sort(key=lambda x: x[0], reverse=True)
     top_k_questions = min(top_k_questions, len(candidates))
     return [candidates[i][1] for i in range(top_k_questions)]
+
+
+def select_questions_by_label_embedding_aggregate(
+    user_need: str,
+    csv_input: str | Path | pd.DataFrame,
+    embedding_model: str,
+    embed_type: EmbedType | str = EmbedType.OPEN_AI,
+    api_key: Optional[str] = None,
+    endpoint: Optional[str] = None,
+    text_column: str = "text",
+    id_column: str = "id",
+    label_column: str = "labels",
+    batch_size: int = 32,
+    top_k_questions: int = 5,
+) -> List[Dict[str, Any]]:
+    """
+    Select top questions by aggregating label-embedding similarity.
+
+    Steps:
+    1) Embed unique labels.
+    2) Compute similarity between user_need and each label.
+    3) Score each question by aggregating similarities across its labels.
+
+    Returns a list of dicts: {id, question, score, labels, matched_labels}
+    """
+    if not user_need or not str(user_need).strip():
+        raise ValueError("user_need must be a non-empty string.")
+    user_need = str(user_need).strip()
+    if top_k_questions <= 0:
+        return []
+
+    records = load_questions(
+        csv_input=csv_input,
+        text_column=text_column,
+        id_column=id_column,
+        label_column=label_column,
+    )
+
+    all_labels: List[str] = []
+    for rec in records:
+        for label in rec.labels:
+            if label and label not in all_labels:
+                all_labels.append(label)
+
+    if not all_labels:
+        raise ValueError(
+            f"No labels found in column '{label_column}'. "
+            "Provide a CSV with labels or specify the correct label_column."
+        )
+
+    if isinstance(embed_type, str):
+        embed_type = EmbedType.from_string(embed_type)
+
+    embedding_instance = Embedding(
+        model_name=embedding_model,
+        embed_type=embed_type,
+        api_key=api_key,
+        endpoint=endpoint,
+    )
+
+    query_vec, _ = embedding_instance.get_embedding([user_need], batch_size=1)
+    label_vecs, _ = embedding_instance.get_embedding(all_labels, batch_size=batch_size)
+
+    label_scores = cosine_similarity(query_vec[0], label_vecs)
+    label_score_map = {label: float(label_scores[i]) for i, label in enumerate(all_labels)}
+
+    candidates: List[Tuple[float, Dict[str, Any]]] = []
+    for rec in records:
+        if not rec.labels:
+            continue
+        scores = [label_score_map.get(lbl, -1.0) for lbl in rec.labels if lbl]
+        if not scores:
+            continue
+        # Aggregate label similarity per question (mean to avoid bias to many labels).
+        score = float(sum(scores) / len(scores))
+        matched_labels = sorted(
+            [lbl for lbl in rec.labels if lbl],
+            key=lambda lbl: label_score_map.get(lbl, -1.0),
+            reverse=True,
+        )
+        candidates.append(
+            (
+                score,
+                {
+                    "id": rec.id,
+                    "question": rec.text,
+                    "score": score,
+                    "labels": rec.labels,
+                    "matched_labels": matched_labels,
+                },
+            )
+        )
+
+    candidates.sort(key=lambda x: x[0], reverse=True)
+    top_k_questions = min(top_k_questions, len(candidates))
+    return [candidates[i][1] for i in range(top_k_questions)]

@@ -153,7 +153,7 @@ export interface SelectQuestionResult {
 
 export interface SelectQuestionResponse extends RunStats {
   message: string;
-  method: 'bm25' | 'embedding' | 'label_embedding';
+  method: 'bm25' | 'embedding' | 'label_embedding' | 'label_embedding_agg';
   results: SelectQuestionResult[];
   total_results: number;
 }
@@ -286,6 +286,10 @@ export const selectQuestionApi = {
   },
   labelEmbedding: async (formData: FormData): Promise<SelectQuestionResponse> => {
     const response = await api.post<SelectQuestionResponse>('/select-question/label-embedding', formData);
+    return response.data;
+  },
+  labelEmbeddingAggregate: async (formData: FormData): Promise<SelectQuestionResponse> => {
+    const response = await api.post<SelectQuestionResponse>('/select-question/label-embedding-aggregate', formData);
     return response.data;
   },
   score: async (formData: FormData): Promise<QuestionScoreResponse> => {
