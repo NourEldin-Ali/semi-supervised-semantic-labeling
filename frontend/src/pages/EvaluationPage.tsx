@@ -63,39 +63,23 @@ export default function EvaluationPage() {
     if (!result?.question_metrics) return;
     const m1 = result.method1_name ?? 'Method 1';
     const m2 = result.method2_name ?? 'Method 2';
-    type PairwiseJudgeItem = {
-      id: string;
-      winner: 'method1' | 'method2' | 'tie';
-      reasoning: string;
-    };
-    const pairwise: PairwiseJudgeItem[] = result.pairwise_judge?.per_question ?? [];
-    const pairwiseById = new Map<string, PairwiseJudgeItem>(
-      pairwise.map((p) => [String(p.id), p])
-    );
     const headers = [
       'Question ID',
       `${m1} Correctness`, `${m1} Completeness`, `${m1} Generalization`, `${m1} Consistency`,
       `${m1} Reasoning`, `${m1} Labels`,
       `${m2} Correctness`, `${m2} Completeness`, `${m2} Generalization`, `${m2} Consistency`,
       `${m2} Reasoning`, `${m2} Labels`,
-      'LLM Winner', 'LLM Winner Reasoning',
     ];
     const rows: string[] = [headers.map(escapeCsv).join(',')];
     for (const q of result.question_metrics) {
       const r1 = q.method1;
       const r2 = q.method2;
-      const pw = pairwiseById.get(String(q.id));
-      let winnerLabel = '';
-      if (pw?.winner === 'method1') winnerLabel = m1;
-      else if (pw?.winner === 'method2') winnerLabel = m2;
-      else if (pw?.winner === 'tie') winnerLabel = 'Tie';
       rows.push([
         escapeCsv(q.id),
         r1.correctness, r1.completeness, r1.generalization, r1.consistency,
         escapeCsv(r1.reasoning ?? ''), escapeCsv((r1.labels ?? []).join(', ')),
         r2.correctness, r2.completeness, r2.generalization, r2.consistency,
         escapeCsv(r2.reasoning ?? ''), escapeCsv((r2.labels ?? []).join(', ')),
-        escapeCsv(winnerLabel), escapeCsv(pw?.reasoning ?? ''),
       ].join(','));
     }
     const avg = result.average_metrics;
@@ -260,18 +244,6 @@ export default function EvaluationPage() {
                   <strong>{result.method2_name}</strong> wins{' '}
                   <strong>{result.pairwise_comparison.method2_wins}</strong>,{' '}
                   ties <strong>{result.pairwise_comparison.ties}</strong>.
-                </p>
-              </div>
-            )}
-            {result.pairwise_judge && (
-              <div className="p-4 bg-purple-50 rounded-lg space-y-1">
-                <p className="text-sm text-purple-800">
-                  Pairwise LLM judge:{' '}
-                  <strong>{result.pairwise_judge.method1_name}</strong> wins{' '}
-                  <strong>{result.pairwise_judge.method1_wins}</strong>,{' '}
-                  <strong>{result.pairwise_judge.method2_name}</strong> wins{' '}
-                  <strong>{result.pairwise_judge.method2_wins}</strong>,{' '}
-                  ties <strong>{result.pairwise_judge.ties}</strong>.
                 </p>
               </div>
             )}

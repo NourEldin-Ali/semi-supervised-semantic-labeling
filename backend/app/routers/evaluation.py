@@ -38,7 +38,6 @@ async def compare_two_csv_files(
     - Reasoning for each evaluation
     - Average metrics across all questions
     - Pairwise comparison counts (method1 wins, method2 wins, ties)
-    - Pairwise LLM-judge winners (method1/method2/tie) per question
     
     Questions without labels in either method are automatically ignored.
     """

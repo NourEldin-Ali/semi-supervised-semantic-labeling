@@ -20,7 +20,7 @@ from config.llm_config import LLMConnector
 from enums.embed_type import EmbedType
 from enums.llm_type import LLMType
 from src.llm.models.labeled_question import QuestionLabels
-from src.llm.nodes.llm_evaluator import evaluate_one_pair, evaluate_pairwise_winner
+from src.llm.nodes.llm_evaluator import evaluate_one_pair
 from src.llm.nodes.question_judge import (
     score_question,
     compare_questions,
@@ -380,27 +380,18 @@ def evaluate_with_llm_judge(
 
     def _run_eval():
         out_list: List[Any] = []
-        pairwise_list: List[Any] = []
         for q1, q2 in zip(questions_method_1, questions_method_2):
             r = evaluate_one_pair(q1, q2, llm, config=run_config)
             out_list.append(r)
-            pairwise_list.append(evaluate_pairwise_winner(q1, q2, llm, config=run_config))
-        return {"evaluations": out_list, "pairwise": pairwise_list}
+        return {"evaluations": out_list}
 
     run_output, run_stats = run_with_stats(_run_eval, token_handler=token_handler)
     evaluation_results = run_output.get("evaluations") or []
-    pairwise_results = run_output.get("pairwise") or []
 
     # Process results: deduplicate by id (keep first) to avoid duplicate rows from any upstream glitch
     seen_ids: Set[str] = set()
     question_metrics = []
-    pairwise_by_id = {}
-    for item in pairwise_results:
-        if item.id not in pairwise_by_id:
-            pairwise_by_id[item.id] = item
 
-    pairwise_llm_counts = {"method1_wins": 0, "method2_wins": 0, "ties": 0}
-    pairwise_llm_details = []
     pairwise_details = []
     pairwise_counts = {"method1_wins": 0, "method2_wins": 0, "ties": 0}
     metric_totals = {
@@ -441,21 +432,6 @@ def evaluate_with_llm_judge(
             "method2_score": score2,
             "outcome": outcome,
         })
-
-        pairwise_item = pairwise_by_id.get(result.id)
-        if pairwise_item:
-            winner = pairwise_item.winner
-            if winner == "method1":
-                pairwise_llm_counts["method1_wins"] += 1
-            elif winner == "method2":
-                pairwise_llm_counts["method2_wins"] += 1
-            else:
-                pairwise_llm_counts["ties"] += 1
-            pairwise_llm_details.append({
-                "id": result.id,
-                "winner": winner,
-                "reasoning": pairwise_item.reasoning,
-            })
 
         question_metrics.append({
             'id': result.id,
@@ -527,14 +503,6 @@ def evaluate_with_llm_judge(
             'method2_wins': pairwise_counts["method2_wins"],
             'ties': pairwise_counts["ties"],
             'per_question': pairwise_details,
-        },
-        'pairwise_judge': {
-            'method1_name': method1_name,
-            'method2_name': method2_name,
-            'method1_wins': pairwise_llm_counts["method1_wins"],
-            'method2_wins': pairwise_llm_counts["method2_wins"],
-            'ties': pairwise_llm_counts["ties"],
-            'per_question': pairwise_llm_details,
         },
         'ignored_data': ignored_data,
     }

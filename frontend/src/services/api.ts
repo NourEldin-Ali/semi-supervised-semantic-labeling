@@ -128,18 +128,6 @@ export interface EvaluationResponse {
         outcome: 'method1' | 'method2' | 'tie';
       }>;
     };
-    pairwise_judge?: {
-      method1_name: string;
-      method2_name: string;
-      method1_wins: number;
-      method2_wins: number;
-      ties: number;
-      per_question: Array<{
-        id: string;
-        winner: 'method1' | 'method2' | 'tie';
-        reasoning: string;
-      }>;
-    };
   };
 }
 
