@@ -1,5 +1,5 @@
-# Use Python image that already includes build tools + git
-FROM python:3.11-slim
+# Use Python image
+FROM python:3.11-slim-bookworm
 
 # Set working directory
 WORKDIR /app
@@ -17,7 +17,7 @@ WORKDIR /app
 #  && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && apt-get install -y --no-install-recommends git \
  && rm -rf /var/lib/apt/lists/*
- 
+
 # WORKDIR /app
 COPY requirements.txt .
 
