@@ -1,5 +1,5 @@
 # Use Python image
-FROM python:3.11-slim-bookworm
+FROM python:3.14.3-slim-bookworm
 
 # Set working directory
 WORKDIR /app
