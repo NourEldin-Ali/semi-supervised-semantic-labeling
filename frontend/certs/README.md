@@ -22,6 +22,9 @@ Expected files:
 - `frontend/certs/tls.crt`
 - `frontend/certs/tls.key`
 
+If these files are missing, the frontend container serves HTTP-only on port 80
+until certs are created (reload hourly or run `docker compose exec frontend nginx -s reload`).
+
 ## Public IP + Let's Encrypt (short-lived IP certs)
 
 This project includes an `acme.sh` container that can auto-renew IP-address

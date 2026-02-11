@@ -21,8 +21,13 @@ FROM nginx:alpine
 # Copy built files from builder
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy nginx configuration templates (not auto-loaded by nginx)
+COPY nginx.conf /etc/nginx/conf.d/https.conf.template
+COPY nginx.http.conf /etc/nginx/conf.d/http.conf.template
+
+# Entrypoint to choose HTTP/HTTPS based on cert availability
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 # Expose ports 80/443
 EXPOSE 80 443
@@ -31,5 +36,5 @@ EXPOSE 80 443
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost/healthz || exit 1
 
-# Start nginx and reload periodically to pick up renewed certs
-CMD ["sh", "-c", "(while :; do sleep 1h; nginx -s reload; done) & exec nginx -g 'daemon off;'"]
+# Start nginx with cert-aware config selection
+CMD ["/docker-entrypoint.sh"]

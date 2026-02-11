@@ -11,7 +11,7 @@ docker compose up --build
 
 3. Open the services:
 
-- Frontend UI: http://localhost (or https://localhost if you set up TLS)
+- Frontend UI: http://localhost (HTTPS is enabled once certs exist; see `frontend/certs/README.md`)
 - Backend API: http://localhost:8000
 - API docs: http://localhost:8000/docs
 
