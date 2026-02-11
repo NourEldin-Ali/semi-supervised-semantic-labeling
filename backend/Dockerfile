@@ -6,17 +6,17 @@ WORKDIR /app
 
 
 # System deps commonly needed for numpy/scipy/sklearn builds + git URL installs
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
-    build-essential \
-    python3-dev \
-    gfortran \
-    pkg-config \
-    libopenblas-dev \
-    liblapack-dev \
- && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#     git \
+#     build-essential \
+#     python3-dev \
+#     gfortran \
+#     pkg-config \
+#     libopenblas-dev \
+#     liblapack-dev \
+#  && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+# WORKDIR /app
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -U pip setuptools wheel
