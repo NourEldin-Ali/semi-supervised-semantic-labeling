@@ -1,22 +1,10 @@
-# Use Python 3.11 slim image as base (pin to stable Debian)
-FROM python:3.11-slim-bookworm
+# Use full Debian-based Python image that already includes build tools + git
+FROM python:3.11-bookworm
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies (use HTTPS + retries to avoid transient mirror timeouts)
-RUN set -eux; \
-    if [ -f /etc/apt/sources.list ]; then \
-        sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list; \
-    fi; \
-    if [ -f /etc/apt/sources.list.d/debian.sources ]; then \
-        sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources; \
-    fi; \
-    apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update; \
-    apt-get install -y --no-install-recommends \
-        git \
-        build-essential; \
-    rm -rf /var/lib/apt/lists/*
+# System build tools + git are already present in the base image
 
 # Copy requirements file
 COPY requirements.txt .
