@@ -4,15 +4,26 @@ FROM python:3.11-bookworm
 # Set working directory
 WORKDIR /app
 
-# System build tools + git are already present in the base image
 
-# Copy requirements file
+# System deps commonly needed for numpy/scipy/sklearn builds + git URL installs
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    build-essential \
+    python3-dev \
+    gfortran \
+    pkg-config \
+    libopenblas-dev \
+    liblapack-dev \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
 COPY requirements.txt .
 
-# Upgrade pip and install Python dependencies
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir --no-build-isolation "git+https://github.com/bm424/scikit-cmeans.git@master"
+RUN pip install --no-cache-dir -U pip setuptools wheel
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Avoid --no-build-isolation unless you have a specific reason
+RUN pip install --no-cache-dir -vvv "git+https://github.com/bm424/scikit-cmeans.git@master"
 
 # Copy application code
 COPY . .
