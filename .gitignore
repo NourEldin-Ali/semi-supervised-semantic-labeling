@@ -12,3 +12,12 @@ backend/embeddings/
 backend/models/
 backend/outputs/
 outputs/*
+
+# Local TLS certs (mkcert/self-signed)
+frontend/certs/*.pem
+frontend/certs/*.key
+frontend/certs/tls.crt
+frontend/certs/tls.key
+
+# ACME account/cert state
+acme/

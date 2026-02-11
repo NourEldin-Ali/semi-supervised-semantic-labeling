@@ -6,14 +6,19 @@
 2. From the repo root, build and start the stack:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 3. Open the services:
 
-- Frontend UI: http://localhost:3000
+- Frontend UI: http://localhost (or https://localhost if you set up TLS)
 - Backend API: http://localhost:8000
 - API docs: http://localhost:8000/docs
+
+## HTTPS Without a Domain (Public IP or Local)
+
+- Local/dev TLS (mkcert): see `frontend/certs/README.md`.
+- Public IP TLS (short-lived IP certs): see `frontend/certs/README.md`.
 
 ## Option 2: Manual Development Setup
 
