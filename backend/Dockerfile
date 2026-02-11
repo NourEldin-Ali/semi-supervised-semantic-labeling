@@ -1,5 +1,5 @@
-# Use full Debian-based Python image that already includes build tools + git
-FROM python:3.11-bookworm
+# Use Python image that already includes build tools + git
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
