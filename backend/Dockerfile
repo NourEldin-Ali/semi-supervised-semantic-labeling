@@ -4,11 +4,14 @@ FROM python:3.11-slim-bookworm
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+# Install system dependencies (use HTTPS + retries to avoid transient mirror timeouts)
+RUN set -eux; \
+    sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list; \
+    apt-get -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update; \
+    apt-get install -y --no-install-recommends \
+        git \
+        build-essential; \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy requirements file
 COPY requirements.txt .
