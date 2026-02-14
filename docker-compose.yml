@@ -3,6 +3,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      network: host
     container_name: semi-supervised-labeling-api
     env_file:
       - ./backend/.env
@@ -29,14 +30,14 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: /api/v1
     container_name: semi-supervised-labeling-frontend
     ports:
       - "80:80"
       - "443:443"
     depends_on:
       - backend
-    environment:
-      - VITE_API_URL=/api/v1
     volumes:
       - ./frontend/certs:/etc/nginx/certs:ro
       - ./acme/www:/var/www/acme:ro

@@ -1,5 +1,5 @@
 # Use Python image
-FROM python:3.14.3-slim-bookworm
+FROM python:3.11-slim-bookworm
 
 # Set working directory
 WORKDIR /app
@@ -25,7 +25,7 @@ RUN pip install --no-cache-dir -U pip setuptools wheel
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Avoid --no-build-isolation unless you have a specific reason
-RUN pip install --no-cache-dir -vvv "git+https://github.com/bm424/scikit-cmeans.git@master"
+RUN pip install --no-cache-dir --no-build-isolation "git+https://github.com/bm424/scikit-cmeans.git@master"
 
 # Copy application code
 COPY . .
